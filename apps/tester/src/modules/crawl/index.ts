@@ -1,17 +1,35 @@
 import { Router } from "express";
 import { chromium } from "playwright";
-import { createGroq, type GroqLanguageModelOptions } from '@ai-sdk/groq';
-import { env } from "@full-tester/env/tester";
-import { generateText } from "ai";
-import { stripHtml } from "./utils/strip-html.js";
+import { DomainCrawler } from "./domain-crawler.js";
+import type { DomainCrawlerOptions } from "./types.js";
 
-const groq = createGroq({
-	apiKey: env.AI_API_KEY
-});
+// const groq = createGroq({
+// 	apiKey: env.AI_API_KEY
+// });
 
 
 export const crawlRouter = Router();
 
+
+crawlRouter.post("/domain", async (req, res) => {
+	const { domain, options } = req.body as { domain?: string; options?: DomainCrawlerOptions };
+
+	if (!domain) {
+		res.status(400).json({ error: "domain field is required" });
+		return;
+	}
+
+	const crawler = new DomainCrawler(options);
+	try {
+		const result = await crawler.crawl(domain);
+		res.json(result);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
+		res.status(500).json({ error: message });
+	} finally {
+		await crawler.close();
+	}
+});
 
 crawlRouter.post("/", async (req, res) => {
 	const { domain } = req.body as { domain?: string };
@@ -30,20 +48,19 @@ crawlRouter.post("/", async (req, res) => {
 		await page.goto(url, { waitUntil: "networkidle" });
 
 		const fullHtml = await page.content();
-		const strippedHtml = stripHtml(fullHtml);
 
-		const result = await generateText({
-			model: groq('openai/gpt-oss-120b'),
-			providerOptions: {
-				groq: {
-					reasoningFormat: 'hidden',
-					reasoningEffort: 'low',
-				} satisfies GroqLanguageModelOptions,
-			},
-			prompt: ``,
-		});
+		// const result = await generateText({
+		// 	model: groq('openai/gpt-oss-120b'),
+		// 	providerOptions: {
+		// 		groq: {
+		// 			reasoningFormat: 'hidden',
+		// 			reasoningEffort: 'low',
+		// 		} satisfies GroqLanguageModelOptions,
+		// 	},
+		// 	prompt: ``,
+		// });
 
-		res.json({ url, html: result.text });
+		res.json(fullHtml);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
 		res.status(500).json({ error: message });
