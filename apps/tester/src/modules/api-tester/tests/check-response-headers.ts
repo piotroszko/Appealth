@@ -24,7 +24,6 @@ export const checkResponseHeaders: CheckDefinition = {
 			return [
 				{
 					...base,
-					passed: false,
 					severity: "warning",
 					message: "No response headers available to check",
 				},
@@ -42,7 +41,6 @@ export const checkResponseHeaders: CheckDefinition = {
 			if (!value) {
 				results.push({
 					...base,
-					passed: false,
 					severity: "warning",
 					message: `Missing security header: ${header}`,
 					details: `The response does not include the ${header} header`,
@@ -50,17 +48,9 @@ export const checkResponseHeaders: CheckDefinition = {
 			} else if (expected && value.toLowerCase() !== expected) {
 				results.push({
 					...base,
-					passed: false,
 					severity: "warning",
 					message: `Unexpected value for ${header}: "${value}"`,
 					details: `Expected "${expected}" but got "${value}"`,
-				});
-			} else {
-				results.push({
-					...base,
-					passed: true,
-					severity: "info",
-					message: `${header} header present`,
 				});
 			}
 		}

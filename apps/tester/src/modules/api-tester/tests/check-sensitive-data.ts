@@ -29,7 +29,6 @@ export const checkSensitiveData: CheckDefinition = {
 			if (SENSITIVE_KEYS.has(key.toLowerCase())) {
 				results.push({
 					...base,
-					passed: false,
 					severity: "error",
 					message: `Sensitive parameter "${key}" found in query string`,
 					details: `The query parameter "${key}" may contain sensitive data and should not be passed in the URL`,

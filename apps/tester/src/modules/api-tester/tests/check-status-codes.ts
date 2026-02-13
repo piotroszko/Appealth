@@ -11,7 +11,6 @@ export const checkStatusCodes: CheckDefinition = {
 			return [
 				{
 					...base,
-					passed: false,
 					severity: "error",
 					message: "Request failed with no response",
 					details: "The request did not receive any response (network error or timeout)",
@@ -23,7 +22,6 @@ export const checkStatusCodes: CheckDefinition = {
 			return [
 				{
 					...base,
-					passed: false,
 					severity: "error",
 					message: `Server error: ${responseStatus}`,
 					details: `Received ${responseStatus} response indicating a server-side failure`,
@@ -35,7 +33,6 @@ export const checkStatusCodes: CheckDefinition = {
 			return [
 				{
 					...base,
-					passed: false,
 					severity: "warning",
 					message: `Client error: ${responseStatus}`,
 					details: `Received ${responseStatus} response indicating a client-side error`,
@@ -43,6 +40,6 @@ export const checkStatusCodes: CheckDefinition = {
 			];
 		}
 
-		return [{ ...base, passed: true, severity: "info", message: `Status ${responseStatus} OK` }];
+		return [];
 	},
 };

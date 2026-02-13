@@ -24,13 +24,14 @@ export function runChecks(requests: CapturedRequest[]): Promise<ApiTesterRespons
 			clearTimeout(timeout);
 
 			if (msg.type === "done") {
-				const passed = msg.results.filter((r) => r.passed).length;
+				const errors = msg.results.filter((r) => r.severity === "error").length;
+				const warnings = msg.results.filter((r) => r.severity === "warning").length;
 				resolve({
 					results: msg.results,
 					summary: {
 						total: msg.results.length,
-						passed,
-						failed: msg.results.length - passed,
+						errors,
+						warnings,
 						durationMs: msg.durationMs,
 					},
 				});

@@ -23,7 +23,6 @@ export const checkAuthHeaders: CheckDefinition = {
 			if (lowerHeaders[header]) {
 				results.push({
 					...base,
-					passed: false,
 					severity: "error",
 					message: `Sensitive header "${header}" sent over HTTP`,
 					details: `The ${header} header is being transmitted over an unencrypted connection`,

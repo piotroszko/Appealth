@@ -1,11 +1,10 @@
 import type { CapturedRequest } from "../../types/index.js";
 
-export type CheckSeverity = "error" | "warning" | "info";
+export type CheckSeverity = "error" | "warning";
 
 export interface CheckResult {
 	checkName: string;
 	request: { url: string; method: string };
-	passed: boolean;
 	severity: CheckSeverity;
 	message: string;
 	details?: string;
@@ -27,8 +26,8 @@ export interface ApiTesterResponse {
 	results: CheckResult[];
 	summary: {
 		total: number;
-		passed: number;
-		failed: number;
+		errors: number;
+		warnings: number;
 		durationMs: number;
 	};
 }

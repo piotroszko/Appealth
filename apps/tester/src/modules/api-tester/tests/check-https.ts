@@ -11,7 +11,6 @@ export const checkHttps: CheckDefinition = {
 			return [
 				{
 					...base,
-					passed: false,
 					severity: "warning",
 					message: "Insecure HTTP request detected",
 					details: `Request to ${url} uses http:// instead of https://`,
@@ -19,6 +18,6 @@ export const checkHttps: CheckDefinition = {
 			];
 		}
 
-		return [{ ...base, passed: true, severity: "info", message: "Request uses HTTPS" }];
+		return [];
 	},
 };
