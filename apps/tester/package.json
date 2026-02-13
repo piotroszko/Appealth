@@ -9,8 +9,11 @@
     "lint": "oxlint"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^3.0.24",
+    "ai": "^6.0.86",
     "express": "^5.1.0",
-    "playwright": "^1.58.2"
+    "playwright": "^1.58.2",
+    "@full-tester/env": "*"
   },
   "devDependencies": {
     "@full-tester/config": "*",
