@@ -5,6 +5,31 @@ import { extractLinks } from "./utils/extract-links.js";
 import { parseSitemap } from "./utils/parse-sitemap.js";
 
 const BLOCKED_RESOURCE_TYPES = new Set(["image", "media", "font", "stylesheet"]);
+const CAPTURE_BODY_TYPES = new Set(["xhr", "fetch", "websocket"]);
+const IGNORED_REQUEST_HEADERS = new Set([
+	"user-agent",
+	"sec-ch-ua",
+	"sec-ch-ua-mobile",
+	"sec-ch-ua-platform",
+	"sec-fetch-dest",
+	"sec-fetch-mode",
+	"sec-fetch-site",
+	"sec-fetch-user",
+	"upgrade-insecure-requests",
+	"accept-encoding",
+	"accept-language",
+	"connection",
+]);
+
+function filterHeaders(headers: Record<string, string>): Record<string, string> {
+	const filtered: Record<string, string> = {};
+	for (const [key, value] of Object.entries(headers)) {
+		if (!IGNORED_REQUEST_HEADERS.has(key.toLowerCase())) {
+			filtered[key] = value;
+		}
+	}
+	return filtered;
+}
 
 const DEFAULTS = {
 	maxPages: 50,
@@ -12,8 +37,20 @@ const DEFAULTS = {
 	pageTimeoutMs: 15_000,
 	concurrency: 3,
 	parseSitemap: true,
-	headless: true,
+	headless: false,
 } as const satisfies Required<DomainCrawlerOptions>;
+
+function parseQueryParams(url: string): Record<string, string> {
+	try {
+		const params: Record<string, string> = {};
+		for (const [key, value] of new URL(url).searchParams) {
+			params[key] = value;
+		}
+		return params;
+	} catch {
+		return {};
+	}
+}
 
 export class DomainCrawler {
 	private browser: Browser | null = null;
@@ -81,23 +118,39 @@ export class DomainCrawler {
 
 			page.on("requestfinished", async (request) => {
 				const response = request.redirectedTo() ? null : await request.response();
+				let responseBody: string | null = null;
+				if (response && CAPTURE_BODY_TYPES.has(request.resourceType())) {
+					try {
+						responseBody = await response.text();
+					} catch {
+						// Body may be unavailable for redirected/aborted requests
+					}
+				}
 				capturedRequests.push({
 					url: request.url(),
 					method: request.method(),
 					resourceType: request.resourceType(),
+					requestHeaders: filterHeaders(await request.allHeaders()),
+					queryParams: parseQueryParams(request.url()),
+					postData: request.postData(),
 					responseStatus: response ? response.status() : null,
 					responseHeaders: response ? await response.allHeaders() : null,
+					responseBody,
 					sourcePageUrl,
 				});
 			});
 
-			page.on("requestfailed", (request) => {
+			page.on("requestfailed", async (request) => {
 				capturedRequests.push({
 					url: request.url(),
 					method: request.method(),
 					resourceType: request.resourceType(),
+					requestHeaders: filterHeaders(await request.allHeaders()),
+					queryParams: parseQueryParams(request.url()),
+					postData: request.postData(),
 					responseStatus: null,
 					responseHeaders: null,
+					responseBody: null,
 					sourcePageUrl,
 				});
 			});
