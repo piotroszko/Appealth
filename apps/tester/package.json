@@ -1,0 +1,23 @@
+{
+  "name": "tester",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "check-types": "tsc --noEmit",
+    "lint": "oxlint"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "playwright": "^1.58.2"
+  },
+  "devDependencies": {
+    "@full-tester/config": "*",
+    "@playwright/test": "^1.58.2",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.13.14",
+    "tsx": "^4.19.4",
+    "typescript": "^5"
+  }
+}
