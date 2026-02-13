@@ -1,0 +1,48 @@
+import type { CheckDefinition } from "../types.js";
+
+export const checkStatusCodes: CheckDefinition = {
+	name: "status-codes",
+	description: "Flags 5xx responses as errors, 4xx as warnings, and null status as failed requests",
+	fn(request) {
+		const { responseStatus, url, method } = request;
+		const base = { checkName: "status-codes", request: { url, method } };
+
+		if (responseStatus === null) {
+			return [
+				{
+					...base,
+					passed: false,
+					severity: "error",
+					message: "Request failed with no response",
+					details: "The request did not receive any response (network error or timeout)",
+				},
+			];
+		}
+
+		if (responseStatus >= 500) {
+			return [
+				{
+					...base,
+					passed: false,
+					severity: "error",
+					message: `Server error: ${responseStatus}`,
+					details: `Received ${responseStatus} response indicating a server-side failure`,
+				},
+			];
+		}
+
+		if (responseStatus >= 400) {
+			return [
+				{
+					...base,
+					passed: false,
+					severity: "warning",
+					message: `Client error: ${responseStatus}`,
+					details: `Received ${responseStatus} response indicating a client-side error`,
+				},
+			];
+		}
+
+		return [{ ...base, passed: true, severity: "info", message: `Status ${responseStatus} OK` }];
+	},
+};
