@@ -8,7 +8,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const WORKER_PATH = path.join(__dirname, "worker.ts");
 const TIMEOUT_MS = 30_000;
 
-export function runChecks(requests: CapturedRequest[]): Promise<ApiTesterResponse> {
+import type { ApiTesterOptions } from "./types.js";
+
+export function runChecks(requests: CapturedRequest[], options: ApiTesterOptions = {}): Promise<ApiTesterResponse> {
 	return new Promise((resolve, reject) => {
 		const worker = fork(WORKER_PATH, [], {
 			execArgv: ["--import", "tsx/esm"],
@@ -52,7 +54,7 @@ export function runChecks(requests: CapturedRequest[]): Promise<ApiTesterRespons
 			}
 		});
 
-		const message: WorkerIncomingMessage = { type: "run", requests };
+		const message: WorkerIncomingMessage = { type: "run", requests, options };
 		worker.send(message);
 	});
 }

@@ -5,7 +5,7 @@ import { runChecks } from "./run-checks.js";
 export const apiTesterRouter = Router();
 
 apiTesterRouter.post("/", async (req, res) => {
-	const { requests } = req.body as ApiTesterRequestBody;
+	const { requests, options } = req.body as ApiTesterRequestBody;
 
 	if (!Array.isArray(requests) || requests.length === 0) {
 		res.status(400).json({ error: "requests field must be a non-empty array" });
@@ -13,7 +13,7 @@ apiTesterRouter.post("/", async (req, res) => {
 	}
 
 	try {
-		const result = await runChecks(requests);
+		const result = await runChecks(requests, options);
 		res.json(result);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);

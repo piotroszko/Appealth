@@ -1,4 +1,4 @@
-import type { CheckDefinition, CheckResult } from "../types.js";
+import type { CheckDefinition, CheckResult } from "../../types.js";
 
 const SENSITIVE_KEYS = new Set([
 	"password",

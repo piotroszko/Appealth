@@ -1,4 +1,4 @@
-import type { CheckDefinition } from "../types.js";
+import type { CheckDefinition } from "../../types.js";
 
 export const checkHttps: CheckDefinition = {
 	name: "https",

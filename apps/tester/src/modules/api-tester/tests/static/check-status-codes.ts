@@ -1,5 +1,5 @@
-import type { CheckDefinition } from "../types.js";
-import { BLOCKED_RESOURCE_TYPES } from "../../crawl/types.js";
+import type { CheckDefinition } from "../../types.js";
+import { BLOCKED_RESOURCE_TYPES } from "../../../crawl/types.js";
 
 export const checkStatusCodes: CheckDefinition = {
 	name: "status-codes",

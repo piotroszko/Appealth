@@ -10,7 +10,11 @@ export interface CheckResult {
 	details?: string;
 }
 
-export type CheckFn = (request: CapturedRequest) => CheckResult[];
+export interface ApiTesterOptions {
+	domains?: string[];
+}
+
+export type CheckFn = (request: CapturedRequest, options: ApiTesterOptions) => CheckResult[];
 
 export interface CheckDefinition {
 	name: string;
@@ -20,6 +24,7 @@ export interface CheckDefinition {
 
 export interface ApiTesterRequestBody {
 	requests: CapturedRequest[];
+	options?: ApiTesterOptions;
 }
 
 export interface ApiTesterResponse {
@@ -35,6 +40,7 @@ export interface ApiTesterResponse {
 export type WorkerIncomingMessage = {
 	type: "run";
 	requests: CapturedRequest[];
+	options: ApiTesterOptions;
 };
 
 export type WorkerOutgoingMessage =

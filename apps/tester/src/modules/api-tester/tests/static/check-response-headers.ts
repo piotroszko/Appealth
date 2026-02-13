@@ -1,4 +1,4 @@
-import type { CheckDefinition, CheckResult } from "../types.js";
+import type { CheckDefinition, CheckResult } from "../../types.js";
 
 const SECURITY_HEADERS = [
 	{ header: "x-content-type-options", expected: "nosniff" },

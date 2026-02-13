@@ -8,9 +8,11 @@ process.on("message", (msg: WorkerIncomingMessage) => {
 		const start = performance.now();
 		const results: CheckResult[] = [];
 
+		const options = msg.options ?? {};
+
 		for (const request of msg.requests) {
 			for (const check of allChecks) {
-				results.push(...check.fn(request));
+				results.push(...check.fn(request, options));
 			}
 		}
 
