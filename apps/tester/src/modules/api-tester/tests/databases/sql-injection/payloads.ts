@@ -84,12 +84,7 @@ const BIGQUERY = [
 ];
 
 // — Cassandra / CQL-specific —
-const CASSANDRA = [
-  "' ALLOW FILTERING;%00",
-  "admin'/*",
-  "' OR 1=1 ALLOW FILTERING--",
-  "'%00",
-];
+const CASSANDRA = ["' ALLOW FILTERING;%00", "admin'/*", "' OR 1=1 ALLOW FILTERING--", "'%00"];
 
 // — DB2-specific —
 const DB2 = [
