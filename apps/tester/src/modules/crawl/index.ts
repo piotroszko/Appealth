@@ -3,6 +3,7 @@ import { chromium } from "playwright";
 import { createGroq, type GroqLanguageModelOptions } from '@ai-sdk/groq';
 import { env } from "@full-tester/env/tester";
 import { generateText } from "ai";
+import { stripHtml } from "./utils/strip-html.js";
 
 const groq = createGroq({
 	apiKey: env.AI_API_KEY
@@ -26,22 +27,23 @@ crawlRouter.post("/", async (req, res) => {
 	try {
 		browser = await chromium.launch({ headless: true });
 		const page = await browser.newPage();
-		await page.goto(url, { waitUntil: "load" });
+		await page.goto(url, { waitUntil: "networkidle" });
+
+		const fullHtml = await page.content();
+		const strippedHtml = stripHtml(fullHtml);
+
 		const result = await generateText({
 			model: groq('openai/gpt-oss-120b'),
 			providerOptions: {
 				groq: {
 					reasoningFormat: 'hidden',
 					reasoningEffort: 'low',
-					parallelToolCalls: true,
-					user: 'user',
 				} satisfies GroqLanguageModelOptions,
 			},
-			prompt: 'How many "r"s are in the word "strawberry"?',
+			prompt: ``,
 		});
-		console.log(result)
 
-		res.json({});
+		res.json({ url, html: result.text });
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
 		res.status(500).json({ error: message });
