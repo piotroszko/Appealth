@@ -1,10 +1,8 @@
 import { chromium, type Browser, type Route } from "playwright";
-import type { CapturedRequest, CrawlResult, DomainCrawlerOptions } from "./types.js";
+import { BLOCKED_RESOURCE_TYPES, type CapturedRequest, type CrawlResult, type DomainCrawlerOptions } from "./types.js";
 import { normalizeUrl, isSameDomain, shouldSkipByExtension } from "./utils/normalize-url.js";
 import { extractLinks } from "./utils/extract-links.js";
 import { parseSitemap } from "./utils/parse-sitemap.js";
-
-const BLOCKED_RESOURCE_TYPES = new Set(["image", "media", "font", "stylesheet"]);
 const CAPTURE_BODY_TYPES = new Set(["xhr", "fetch", "websocket"]);
 const IGNORED_REQUEST_HEADERS = new Set([
 	"user-agent",

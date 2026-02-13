@@ -10,6 +10,8 @@ export interface CrawlResult {
 	durationMs: number;
 }
 
+export const BLOCKED_RESOURCE_TYPES = new Set(["image", "media", "font", "stylesheet"]);
+
 export interface DomainCrawlerOptions {
 	maxPages?: number;
 	maxCrawlTimeMs?: number;
