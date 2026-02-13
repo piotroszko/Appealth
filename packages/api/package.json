@@ -1,0 +1,27 @@
+{
+  "name": "@full-tester/api",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@full-tester/auth": "*",
+    "@full-tester/db": "*",
+    "@full-tester/env": "*",
+    "@trpc/client": "^11.7.2",
+    "@trpc/server": "^11.7.2",
+    "dotenv": "^17.2.2",
+    "next": "^16.1.1",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@full-tester/config": "*",
+    "typescript": "^5"
+  }
+}

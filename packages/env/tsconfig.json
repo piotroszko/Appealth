@@ -1,0 +1,3 @@
+{
+  "extends": "@full-tester/config/tsconfig.base.json"
+}
