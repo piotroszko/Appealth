@@ -7,8 +7,8 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   reactCompiler: true,
   experimental: {
-    workerThreads: true
-  }
+    workerThreads: true,
+  },
 };
 
 export default nextConfig;

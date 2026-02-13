@@ -4,7 +4,8 @@
       "mcp__ide__getDiagnostics",
       "WebSearch",
       "WebFetch(domain:gist.github.com)",
-      "WebFetch(domain:swisskyrepo.github.io)"
+      "WebFetch(domain:swisskyrepo.github.io)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

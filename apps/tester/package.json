@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@ai-sdk/groq": "^3.0.24",
+    "@full-tester/env": "*",
     "ai": "^6.0.86",
     "express": "^5.1.0",
-    "playwright": "^1.58.2",
-    "@full-tester/env": "*"
+    "playwright": "^1.58.2"
   },
   "devDependencies": {
     "@full-tester/config": "*",

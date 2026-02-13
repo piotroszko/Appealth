@@ -8,12 +8,12 @@ const port = 3002;
 app.use(express.json());
 
 app.get("/", (_req, res) => {
-	res.json({ status: "ok", message: "full-tester API" });
+  res.json({ status: "ok", message: "full-tester API" });
 });
 
 app.use("/crawl", crawlRouter);
 app.use("/api-tester", apiTesterRouter);
 
 app.listen(port, () => {
-	console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });

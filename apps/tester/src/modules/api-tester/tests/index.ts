@@ -7,10 +7,10 @@ import { checkSensitiveData } from "./static/check-sensitive-data.js";
 import { checkSqlInjection } from "./databases/sql-injection/index.js";
 
 export const allChecks: CheckDefinition[] = [
-	checkStatusCodes,
-	checkResponseHeaders,
-	checkHttps,
-	checkAuthHeaders,
-	checkSensitiveData,
-	checkSqlInjection,
+  checkStatusCodes,
+  checkResponseHeaders,
+  checkHttps,
+  checkAuthHeaders,
+  checkSensitiveData,
+  checkSqlInjection,
 ];
