@@ -1,7 +1,7 @@
 import type { CheckResult, WorkerIncomingMessage, WorkerOutgoingMessage } from "./types.js";
 import { allChecks } from "./tests/index.js";
 
-process.on("message", (msg: WorkerIncomingMessage) => {
+process.on("message", async (msg: WorkerIncomingMessage) => {
 	if (msg.type !== "run") return;
 
 	try {
@@ -12,7 +12,7 @@ process.on("message", (msg: WorkerIncomingMessage) => {
 
 		for (const request of msg.requests) {
 			for (const check of allChecks) {
-				results.push(...check.fn(request, options));
+				results.push(...(await check.fn(request, options)));
 			}
 		}
 

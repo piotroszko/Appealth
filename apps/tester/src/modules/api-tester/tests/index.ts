@@ -4,6 +4,7 @@ import { checkResponseHeaders } from "./static/check-response-headers.js";
 import { checkHttps } from "./static/check-https.js";
 import { checkAuthHeaders } from "./static/check-auth-headers.js";
 import { checkSensitiveData } from "./static/check-sensitive-data.js";
+import { checkMysqlInjection } from "./databases/check-mysql-injection.js";
 
 export const allChecks: CheckDefinition[] = [
 	checkStatusCodes,
@@ -11,4 +12,5 @@ export const allChecks: CheckDefinition[] = [
 	checkHttps,
 	checkAuthHeaders,
 	checkSensitiveData,
+	checkMysqlInjection,
 ];

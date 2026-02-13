@@ -14,7 +14,7 @@ export interface ApiTesterOptions {
 	domains?: string[];
 }
 
-export type CheckFn = (request: CapturedRequest, options: ApiTesterOptions) => CheckResult[];
+export type CheckFn = (request: CapturedRequest, options: ApiTesterOptions) => CheckResult[] | Promise<CheckResult[]>;
 
 export interface CheckDefinition {
 	name: string;
