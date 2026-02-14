@@ -7,6 +7,7 @@ import { htmlValidatorRouter } from "./modules/html-validator/index.js";
 import { dnsRouter } from "./modules/dns/index.js";
 import { sslTlsRouter } from "./modules/ssl-tls/index.js";
 import { startApiTesterCron } from "./modules/api-tester/cron.js";
+import { startBrokenLinksCron } from "./modules/broken-links/cron.js";
 
 await mongoose.connect(env.DATABASE_URL);
 console.log("Connected to MongoDB");
@@ -29,4 +30,5 @@ app.use("/ssl-tls", sslTlsRouter);
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
   startApiTesterCron();
+  startBrokenLinksCron();
 });

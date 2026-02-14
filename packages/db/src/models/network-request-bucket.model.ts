@@ -5,13 +5,15 @@ const { Schema, model } = mongoose;
 const networkRequestBucketSchema = new Schema(
   {
     _id: { type: String },
-    apiTestRequestId: { type: String, ref: "ApiTestRequest", required: true },
+    apiTestRequestId: { type: String, ref: "ApiTestRequest" },
+    brokenLinksTestRequestId: { type: String, ref: "BrokenLinksTestRequest" },
     requests: { type: Schema.Types.Mixed },
   },
   { collection: "network_request_bucket", timestamps: { updatedAt: false } },
 );
 
 networkRequestBucketSchema.index({ apiTestRequestId: 1 });
+networkRequestBucketSchema.index({ brokenLinksTestRequestId: 1 });
 
 const NetworkRequestBucket = model(
   "NetworkRequestBucket",
