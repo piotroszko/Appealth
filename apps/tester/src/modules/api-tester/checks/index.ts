@@ -16,6 +16,7 @@ import { CorsCheck } from "./cors/cors-check.js";
 import { OpenRedirectCheck } from "./open-redirect/open-redirect-check.js";
 import { HttpMethodTamperingCheck } from "./http-method-tampering/http-method-tampering-check.js";
 import { JwtCheck } from "./jwt/jwt-check.js";
+import { SstiCheck } from "./ssti/ssti-check.js";
 
 export function createChecks(): BaseCheck[] {
   return [
@@ -36,5 +37,6 @@ export function createChecks(): BaseCheck[] {
     new OpenRedirectCheck(),
     new HttpMethodTamperingCheck(),
     new JwtCheck(),
+    new SstiCheck(),
   ];
 }
