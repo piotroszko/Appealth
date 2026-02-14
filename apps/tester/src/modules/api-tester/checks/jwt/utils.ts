@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
 import type { CapturedRequest } from "../../../../types/index.js";
 import type { CheckSeverity } from "../../types.js";
@@ -208,6 +209,28 @@ export function analyzeJwtHeader(decoded: DecodedJwt): Finding[] {
     });
   }
 
+  // jku — JWK Set URL (attacker can host own key set)
+  if (header.jku != null) {
+    findings.push({
+      severity: "error",
+      message: "JWT header contains jku (JWK Set URL) — potential key injection",
+      details:
+        `The 'jku' header points to "${header.jku}". An attacker can supply their own URL hosting ` +
+        `a crafted JWK Set to have the server verify tokens with an attacker-controlled key.`,
+    });
+  }
+
+  // x5u — X.509 URL (attacker can host own certificate)
+  if (header.x5u != null) {
+    findings.push({
+      severity: "error",
+      message: "JWT header contains x5u (X.509 URL) — potential key injection",
+      details:
+        `The 'x5u' header points to "${header.x5u}". An attacker can supply their own URL hosting ` +
+        `a crafted X.509 certificate to have the server verify tokens with an attacker-controlled key.`,
+    });
+  }
+
   // Confused algorithm: HMAC + external key reference
   if (/^HS/i.test(alg)) {
     for (const key of DANGEROUS_HEADER_KEYS) {
@@ -248,4 +271,88 @@ export function tryWeakSecrets(token: string, algorithm: string): string | null 
     }
   }
   return null;
+}
+
+// ---------------------------------------------------------------------------
+// Algorithm confusion (RSA → HMAC)
+// ---------------------------------------------------------------------------
+
+/**
+ * Extract a PEM public key from an x5c certificate chain header.
+ * Returns null if extraction fails.
+ */
+function extractPublicKeyFromX5c(x5c: unknown[]): string | null {
+  try {
+    const cert = String(x5c[0]);
+    const pemCert = `-----BEGIN CERTIFICATE-----\n${cert}\n-----END CERTIFICATE-----`;
+    const publicKey = crypto.createPublicKey(pemCert);
+    return publicKey.export({ type: "spki", format: "pem" }) as string;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Check for algorithm confusion attacks on asymmetric-algorithm JWTs.
+ *
+ * If the token uses RS256 (or another RSA/EC algorithm) and the public key
+ * is available (e.g. via the x5c header), this attempts to re-sign the
+ * token using HS256 with the public key as the HMAC secret — the classic
+ * algorithm confusion / key confusion attack.
+ */
+export function checkAlgorithmConfusion(_token: string, decoded: DecodedJwt): Finding[] {
+  const findings: Finding[] = [];
+  const { header } = decoded;
+  const alg = String(header.alg ?? "");
+
+  // Only applies to asymmetric algorithms
+  if (!/^(?:RS|PS|ES)\d/i.test(alg)) return findings;
+
+  // Try to extract public key from x5c header
+  if (Array.isArray(header.x5c) && header.x5c.length > 0) {
+    const publicKeyPem = extractPublicKeyFromX5c(header.x5c);
+
+    if (publicKeyPem) {
+      try {
+        // Re-sign the token payload as HS256 using the public key as HMAC secret
+        const forgedToken = jwt.sign(decoded.payload as object, publicKeyPem, {
+          algorithm: "HS256" as jwt.Algorithm,
+        });
+
+        if (forgedToken) {
+          findings.push({
+            severity: "error",
+            message: `Algorithm confusion: ${alg} token re-signed as HS256 using public key from x5c`,
+            details:
+              `The original ${alg} token was successfully re-signed using HS256 with the public key ` +
+              `extracted from the embedded x5c certificate chain. If the server does not strictly ` +
+              `enforce the expected algorithm, this forged token would be accepted — allowing ` +
+              `arbitrary token forgery.`,
+          });
+        }
+      } catch {
+        // Re-signing failed — still flag the potential
+        findings.push({
+          severity: "warning",
+          message: `JWT uses ${alg} with embedded x5c — potential algorithm confusion target`,
+          details:
+            `The token contains an x5c certificate chain from which a public key could be extracted. ` +
+            `An attacker could attempt to re-sign the token using HS256 with that public key as ` +
+            `the HMAC secret.`,
+        });
+      }
+    }
+  } else {
+    // No embedded key material, but RSA tokens are still potential targets
+    findings.push({
+      severity: "warning",
+      message: `JWT uses asymmetric algorithm (${alg}) — verify algorithm confusion protections`,
+      details:
+        `Ensure the server strictly enforces the expected algorithm and does not accept HS256 ` +
+        `tokens verified with the RSA/EC public key. If the server's public key is known (e.g. ` +
+        `via a JWKS endpoint), an attacker could re-sign tokens as HS256 using that key.`,
+    });
+  }
+
+  return findings;
 }

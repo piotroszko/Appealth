@@ -7,6 +7,7 @@ import {
   analyzeJwtHeader,
   analyzeJwtClaims,
   tryWeakSecrets,
+  checkAlgorithmConfusion,
 } from "./utils.js";
 
 export class JwtCheck extends BaseCheck {
@@ -41,6 +42,16 @@ export class JwtCheck extends BaseCheck {
 
       // Claims analysis (exp, iat, nbf, lifetime)
       for (const finding of analyzeJwtClaims(decoded)) {
+        results.push({
+          ...base,
+          severity: finding.severity,
+          message: finding.message,
+          details: `Found in ${location}. ${finding.details}`,
+        });
+      }
+
+      // Algorithm confusion: asymmetric → HMAC re-signing
+      for (const finding of checkAlgorithmConfusion(token, decoded)) {
         results.push({
           ...base,
           severity: finding.severity,
