@@ -14,14 +14,18 @@
     "@full-tester/env": "*",
     "ai": "^6.0.86",
     "cron": "^4.4.0",
+    "dns-packet": "^5.6.1",
     "express": "^5.1.0",
+    "googleapis": "^171.4.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.14.0",
-    "playwright": "^1.58.2"
+    "playwright": "^1.58.2",
+    "vnu-jar": "^26.2.13"
   },
   "devDependencies": {
     "@full-tester/config": "*",
     "@playwright/test": "^1.58.2",
+    "@types/dns-packet": "^5.6.5",
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.13.14",

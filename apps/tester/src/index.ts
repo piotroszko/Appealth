@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 import express from "express";
 import { env } from "@full-tester/env/tester";
 import { crawlRouter } from "./modules/crawl/index.js";
+import { pageinsightsRouter } from "./modules/pageinsights/index.js";
+import { htmlValidatorRouter } from "./modules/html-validator/index.js";
+import { dnsRouter } from "./modules/dns/index.js";
 import { startApiTesterCron } from "./modules/api-tester/cron.js";
 
 await mongoose.connect(env.DATABASE_URL);
@@ -17,6 +20,9 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/crawl", crawlRouter);
+app.use("/pageinsights", pageinsightsRouter);
+app.use("/html-validator", htmlValidatorRouter);
+app.use("/dns", dnsRouter);
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
