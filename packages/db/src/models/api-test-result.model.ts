@@ -16,28 +16,24 @@ const checkResultSchema = new Schema(
   { _id: false },
 );
 
-const apiTestResultSchema = new Schema(
+const apiTestResultBucketSchema = new Schema(
   {
     _id: { type: String },
     apiTestRequestId: {
       type: String,
       ref: "ApiTestRequest",
       required: true,
-      unique: true,
     },
     results: [checkResultSchema],
-    summary: {
-      total: { type: Number, required: true },
-      errors: { type: Number, required: true },
-      warnings: { type: Number, required: true },
-      durationMs: { type: Number, required: true },
-    },
   },
-  { collection: "api_test_result", timestamps: { updatedAt: false } },
+  { collection: "api_test_result_bucket", timestamps: { updatedAt: false } },
 );
 
-apiTestResultSchema.index({ apiTestRequestId: 1 }, { unique: true });
+apiTestResultBucketSchema.index({ apiTestRequestId: 1 });
 
-const ApiTestResult = model("ApiTestResult", apiTestResultSchema);
+const ApiTestResultBucket = model(
+  "ApiTestResultBucket",
+  apiTestResultBucketSchema,
+);
 
-export { ApiTestResult };
+export { ApiTestResultBucket };

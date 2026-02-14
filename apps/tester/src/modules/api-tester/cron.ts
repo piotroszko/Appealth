@@ -1,9 +1,12 @@
 import { CronJob } from "cron";
 import { ApiTestRequest } from "@full-tester/db/models/api-test-request.model";
 import { NetworkRequestBucket } from "@full-tester/db/models/network-request-bucket.model";
-import { ApiTestResult } from "@full-tester/db/models/api-test-result.model";
+import { ApiTestResultBucket } from "@full-tester/db/models/api-test-result.model";
 import { runChecks } from "./run-checks.js";
 import type { CapturedRequest } from "../../types/index.js";
+import type { CheckResult } from "./types.js";
+
+const RESULT_BUCKET_SIZE = 500;
 
 let isProcessing = false;
 
@@ -20,11 +23,15 @@ async function processNextRequest() {
 
     if (!request) return;
 
-    const bucket = await NetworkRequestBucket.findOne({
+    const buckets = await NetworkRequestBucket.find({
       apiTestRequestId: request._id,
     });
 
-    if (!bucket || !Array.isArray(bucket.requests) || bucket.requests.length === 0) {
+    const capturedRequests = buckets.flatMap(
+      (b) => (b.requests as CapturedRequest[]) ?? [],
+    );
+
+    if (capturedRequests.length === 0) {
       await ApiTestRequest.updateOne(
         { _id: request._id },
         { $set: { status: "failed", error: "No network requests found", completedAt: new Date() } },
@@ -32,23 +39,23 @@ async function processNextRequest() {
       return;
     }
 
-    const capturedRequests = bucket.requests as CapturedRequest[];
     const result = await runChecks(
       capturedRequests,
       { domains: [request.domain] },
       request.type as "basic" | "full",
     );
 
-    await ApiTestResult.create({
-      _id: crypto.randomUUID(),
-      apiTestRequestId: request._id,
-      results: result.results,
-      summary: result.summary,
-    });
+    await saveResultBuckets(request._id as string, result.results);
 
     await ApiTestRequest.updateOne(
       { _id: request._id },
-      { $set: { status: "completed", completedAt: new Date() } },
+      {
+        $set: {
+          status: "completed",
+          summary: result.summary,
+          completedAt: new Date(),
+        },
+      },
     );
 
     console.log(`Completed test request ${request._id} (${request.type}) for ${request.domain}`);
@@ -57,6 +64,17 @@ async function processNextRequest() {
     console.error("Cron processing error:", message);
   } finally {
     isProcessing = false;
+  }
+}
+
+async function saveResultBuckets(apiTestRequestId: string, results: CheckResult[]) {
+  for (let i = 0; i < results.length; i += RESULT_BUCKET_SIZE) {
+    const chunk = results.slice(i, i + RESULT_BUCKET_SIZE);
+    await ApiTestResultBucket.create({
+      _id: crypto.randomUUID(),
+      apiTestRequestId,
+      results: chunk,
+    });
   }
 }
 

@@ -14,6 +14,12 @@ const apiTestRequestSchema = new Schema(
       default: "pending",
     },
     error: { type: String },
+    summary: {
+      total: { type: Number },
+      errors: { type: Number },
+      warnings: { type: Number },
+      durationMs: { type: Number },
+    },
     startedAt: { type: Date },
     completedAt: { type: Date },
   },
