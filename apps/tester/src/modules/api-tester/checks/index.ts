@@ -3,6 +3,7 @@ import { StatusCodesCheck } from "./static/status-codes-check.js";
 import { ResponseHeadersCheck } from "./static/response-headers-check.js";
 import { HttpsCheck } from "./static/https-check.js";
 import { AuthHeadersCheck } from "./static/auth-headers-check.js";
+import { CookieSecurityCheck } from "./cookies/cookie-security-check.js";
 import { SensitiveDataCheck } from "./sensitive-data/sensitive-data-check.js";
 import { SqlInjectionCheck } from "./sql-injection/sql-injection-check.js";
 import { XssCheck } from "./xss/xss-check.js";
@@ -22,6 +23,7 @@ export function createChecks(): BaseCheck[] {
     new ResponseHeadersCheck(),
     new HttpsCheck(),
     new AuthHeadersCheck(),
+    new CookieSecurityCheck(),
     new SensitiveDataCheck(),
     new SqlInjectionCheck(),
     new XssCheck(),
