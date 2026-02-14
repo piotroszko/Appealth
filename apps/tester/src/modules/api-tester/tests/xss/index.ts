@@ -1,10 +1,27 @@
 import type { CheckDefinition } from "../../types.js";
 import { isAllowedDomain } from "../../utils.js";
-import { parseBodyFields } from "./utils.js";
-import { testQueryParams } from "./test-query-params.js";
-import { testBodyFields } from "./test-body-fields.js";
-import { testUrlPath } from "./test-url-path.js";
-import { testHeaders } from "./test-headers.js";
+import type { InjectionConfig } from "../utils.js";
+import {
+  parseBodyFields,
+  testQueryParams,
+  testBodyFields,
+  testUrlPath,
+  testHeaders,
+} from "../utils.js";
+import { XSS_PAYLOADS } from "./payloads.js";
+import { matchXssReflection } from "./utils.js";
+
+const xssConfig: InjectionConfig = {
+  payloads: XSS_PAYLOADS,
+  vulnLabel: "reflected XSS",
+  match(body, payload) {
+    if (!matchXssReflection(body, payload)) return null;
+    return {
+      suffix: "",
+      explanation: "was reflected unescaped in the response",
+    };
+  },
+};
 
 export const checkXss: CheckDefinition = {
   name: "xss",
@@ -26,10 +43,10 @@ export const checkXss: CheckDefinition = {
     const bodyFields = postData ? parseBodyFields(postData, contentType) : null;
 
     const results = await Promise.all([
-      testUrlPath(request, base),
-      hasQueryParams ? testQueryParams(request, base) : [],
-      bodyFields ? testBodyFields(request, bodyFields, contentType, base) : [],
-      testHeaders(request, base),
+      testUrlPath(request, base, xssConfig),
+      hasQueryParams ? testQueryParams(request, base, xssConfig) : [],
+      bodyFields ? testBodyFields(request, bodyFields, contentType, base, xssConfig) : [],
+      testHeaders(request, base, xssConfig),
     ]);
 
     return results.flat();

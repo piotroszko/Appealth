@@ -1,10 +1,28 @@
 import type { CheckDefinition } from "../../../types.js";
 import { isAllowedDomain } from "../../../utils.js";
-import { parseBodyFields } from "./utils.js";
-import { testQueryParams } from "./test-query-params.js";
-import { testBodyFields } from "./test-body-fields.js";
-import { testUrlPath } from "./test-url-path.js";
-import { testHeaders } from "./test-headers.js";
+import type { InjectionConfig } from "../../utils.js";
+import {
+  parseBodyFields,
+  testQueryParams,
+  testBodyFields,
+  testUrlPath,
+  testHeaders,
+} from "../../utils.js";
+import { SQL_PAYLOADS } from "./payloads.js";
+import { matchSqlError } from "./utils.js";
+
+const sqlConfig: InjectionConfig = {
+  payloads: SQL_PAYLOADS,
+  vulnLabel: "SQL injection",
+  match(body) {
+    const m = matchSqlError(body);
+    if (!m) return null;
+    return {
+      suffix: ` (${m.engine})`,
+      explanation: `triggered ${m.engine} error pattern: ${m.pattern}`,
+    };
+  },
+};
 
 export const checkSqlInjection: CheckDefinition = {
   name: "sql-injection",
@@ -26,10 +44,10 @@ export const checkSqlInjection: CheckDefinition = {
     const bodyFields = postData ? parseBodyFields(postData, contentType) : null;
 
     const results = await Promise.all([
-      testUrlPath(request, base),
-      hasQueryParams ? testQueryParams(request, base) : [],
-      bodyFields ? testBodyFields(request, bodyFields, contentType, base) : [],
-      testHeaders(request, base),
+      testUrlPath(request, base, sqlConfig),
+      hasQueryParams ? testQueryParams(request, base, sqlConfig) : [],
+      bodyFields ? testBodyFields(request, bodyFields, contentType, base, sqlConfig) : [],
+      testHeaders(request, base, sqlConfig),
     ]);
 
     return results.flat();
