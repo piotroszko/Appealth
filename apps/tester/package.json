@@ -12,6 +12,7 @@
     "@ai-sdk/groq": "^3.0.24",
     "@full-tester/env": "*",
     "ai": "^6.0.86",
+    "cron": "^4.4.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.3",
     "playwright": "^1.58.2"
