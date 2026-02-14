@@ -194,6 +194,24 @@ export const DEBUG_ADMIN: ProbePath[] = [
     severity: "error",
     bodyPatterns: [/trace/i, /request\s+details/i, /asp\.net/i],
   },
+  {
+    path: "_debug/",
+    label: "Debug endpoint exposed",
+    severity: "error",
+    bodyPatterns: [/debug/i, /stack/i, /trace/i, /error/i],
+  },
+  {
+    path: "graphiql",
+    label: "GraphiQL IDE exposed",
+    severity: "warning",
+    bodyPatterns: [/graphiql/i, /graphql/i, /<script/i, /react/i],
+  },
+  {
+    path: "graphql",
+    label: "GraphQL endpoint exposed",
+    severity: "warning",
+    bodyPatterns: [/"data"/i, /query/i, /mutation/i, /__schema/i, /Must provide query string/i],
+  },
 ];
 
 // ── 5. Server Information ───────────────────────────────────────────────
@@ -241,6 +259,48 @@ export const SERVER_INFO: ProbePath[] = [
     bodyPatterns: [],
     statusOnly: true,
     minBodyLength: 10_000,
+  },
+  {
+    path: "actuator/beans",
+    label: "Spring Actuator /beans exposed",
+    severity: "error",
+    bodyPatterns: [/"contexts"/i, /"beans"/i, /"scope"/i],
+  },
+  {
+    path: "actuator/mappings",
+    label: "Spring Actuator /mappings exposed",
+    severity: "error",
+    bodyPatterns: [/"contexts"/i, /"mappings"/i, /"dispatcherServlets"/i],
+  },
+  {
+    path: "actuator/loggers",
+    label: "Spring Actuator /loggers exposed",
+    severity: "warning",
+    bodyPatterns: [/"levels"/i, /"loggers"/i, /"effectiveLevel"/i],
+  },
+  {
+    path: "actuator/threaddump",
+    label: "Spring Actuator /threaddump exposed",
+    severity: "error",
+    bodyPatterns: [/"threads"/i, /"threadName"/i, /"stackTrace"/i],
+  },
+  {
+    path: "actuator/info",
+    label: "Spring Actuator /info exposed",
+    severity: "warning",
+    bodyPatterns: [/"app"/i, /"build"/i, /"git"/i, /"version"/i],
+  },
+  {
+    path: "actuator/metrics",
+    label: "Spring Actuator /metrics exposed",
+    severity: "warning",
+    bodyPatterns: [/"names"/i, /jvm\./i, /http\.server/i, /system\./i],
+  },
+  {
+    path: "nginx_status",
+    label: "Nginx stub_status exposed",
+    severity: "error",
+    bodyPatterns: [/Active connections:/i, /server accepts handled requests/i, /Reading:/i],
   },
 ];
 
@@ -590,6 +650,46 @@ export const PATH_TRAVERSAL: ProbePath[] = [
   },
 ];
 
+// ── 11. Well-Known & Service Discovery ──────────────────────────────
+export const WELL_KNOWN: ProbePath[] = [
+  {
+    path: ".well-known/openid-configuration",
+    label: "OpenID Connect discovery exposed",
+    severity: "warning",
+    bodyPatterns: [/"issuer"/i, /"authorization_endpoint"/i, /"token_endpoint"/i],
+  },
+  {
+    path: ".well-known/jwks.json",
+    label: "JSON Web Key Set exposed",
+    severity: "warning",
+    bodyPatterns: [/"keys"/i, /"kty"/i, /"kid"/i, /"n"/i],
+  },
+  {
+    path: ".well-known/security.txt",
+    label: "security.txt found",
+    severity: "warning",
+    bodyPatterns: [/Contact:/i, /Expires:/i, /Policy:/i],
+  },
+  {
+    path: ".well-known/assetlinks.json",
+    label: "Android assetlinks.json exposed",
+    severity: "warning",
+    bodyPatterns: [/"target"/i, /"namespace"/i, /"package_name"/i],
+  },
+  {
+    path: ".well-known/apple-app-site-association",
+    label: "Apple app site association exposed",
+    severity: "warning",
+    bodyPatterns: [/"applinks"/i, /"webcredentials"/i, /"appID"/i],
+  },
+  {
+    path: ".well-known/change-password",
+    label: "Well-known change-password endpoint exposed",
+    severity: "warning",
+    bodyPatterns: [/password/i, /change/i, /reset/i],
+  },
+];
+
 export const ALL_CATEGORIES = [
   { name: "Environment & Secrets", paths: ENV_SECRETS },
   { name: "Version Control", paths: VERSION_CONTROL },
@@ -601,4 +701,5 @@ export const ALL_CATEGORIES = [
   { name: "Source Code & Source Maps", paths: SOURCE_EXPOSURE },
   { name: "Log Files", paths: LOG_FILES },
   { name: "Path Traversal / LFI", paths: PATH_TRAVERSAL },
+  { name: "Well-Known & Service Discovery", paths: WELL_KNOWN },
 ] as const;
