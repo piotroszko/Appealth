@@ -5,7 +5,7 @@ import type { CapturedRequest } from "../../types/index.js";
 import type { ApiTesterResponse, WorkerIncomingMessage, WorkerOutgoingMessage } from "./types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const WORKER_PATH = path.join(__dirname, "worker.ts");
+const WORKER_PATH = path.join(__dirname, "worker/worker.ts");
 const TIMEOUT_MS = 30_000;
 
 import type { ApiTesterOptions } from "./types.js";

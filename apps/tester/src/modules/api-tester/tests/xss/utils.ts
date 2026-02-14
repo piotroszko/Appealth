@@ -1,4 +1,4 @@
-import { throttledFetch } from "../../fetch-wrapper.js";
+import { throttledFetch } from "../../worker/fetch-wrapper.js";
 
 export function parseBodyFields(
   postData: string,

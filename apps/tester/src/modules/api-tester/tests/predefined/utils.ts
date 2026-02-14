@@ -1,4 +1,4 @@
-import { throttledFetch } from "../../fetch-wrapper.js";
+import { throttledFetch } from "../../worker/fetch-wrapper.js";
 import type { CheckResult } from "../../types.js";
 import type { ProbePath, ProbeResult } from "./types.js";
 

@@ -1,4 +1,4 @@
-import { throttledFetch } from "../../../fetch-wrapper.js";
+import { throttledFetch } from "../../../worker/fetch-wrapper.js";
 import { SQL_ERROR_PATTERNS } from "./payloads.js";
 
 export function parseBodyFields(

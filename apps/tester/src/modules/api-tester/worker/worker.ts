@@ -1,6 +1,6 @@
-import type { CheckResult, WorkerIncomingMessage, WorkerOutgoingMessage } from "./types.js";
 import { configureFetch } from "./fetch-wrapper.js";
-import { allChecks } from "./tests/index.js";
+import { allChecks } from "../tests/index.js";
+import type { CheckResult, WorkerIncomingMessage, WorkerOutgoingMessage } from "../types.js";
 
 process.on("message", async (msg: WorkerIncomingMessage) => {
   if (msg.type !== "run") return;
