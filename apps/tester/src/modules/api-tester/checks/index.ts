@@ -11,6 +11,7 @@ import { SsrfCheck } from "./ssrf/ssrf-check.js";
 import { NoSqlInjectionCheck } from "./nosql-injection/nosql-injection-check.js";
 import { PredefinedUrlsCheck } from "./predefined-urls/predefined-urls-check.js";
 import { CorsCheck } from "./cors/cors-check.js";
+import { OpenRedirectCheck } from "./open-redirect/open-redirect-check.js";
 
 export function createChecks(): BaseCheck[] {
   return [
@@ -26,5 +27,6 @@ export function createChecks(): BaseCheck[] {
     new NoSqlInjectionCheck(),
     new PredefinedUrlsCheck(),
     new CorsCheck(),
+    new OpenRedirectCheck(),
   ];
 }

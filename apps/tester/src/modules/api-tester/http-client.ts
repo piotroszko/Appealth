@@ -21,7 +21,7 @@ export class HttpClient {
     return fetch(url, {
       ...init,
       signal: AbortSignal.timeout(this.fetchTimeoutMs),
-      redirect: "follow",
+      redirect: init?.redirect ?? "follow",
     });
   }
 
