@@ -140,7 +140,8 @@ async function checkDkim(domain: string): Promise<{ dkim: DkimResult; findings: 
   const results = await Promise.allSettled(
     DKIM_SELECTORS.map(async (selector) => {
       const records = await resolveTxtRecords(`${selector}._domainkey.${domain}`);
-      if (records.some((r) => r.includes("v=DKIM1") || r.includes("k=rsa") || r.includes("p="))) {
+      // Require v=DKIM1 tag or both k= and p= tags to avoid false positives from wildcard DNS
+      if (records.some((r) => r.includes("v=DKIM1") || (r.includes("k=") && r.includes("p=")))) {
         return selector;
       }
       return null;

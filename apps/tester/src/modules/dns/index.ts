@@ -10,7 +10,6 @@ dnsRouter.post("/", async (req, res) => {
     return;
   }
 
-  // Strip protocol and path
   let cleanDomain = domain.trim();
   try {
     if (cleanDomain.includes("://")) {
@@ -19,7 +18,6 @@ dnsRouter.post("/", async (req, res) => {
       cleanDomain = cleanDomain.split("/")[0]!;
     }
   } catch {
-    // Use as-is if URL parsing fails
   }
   cleanDomain = cleanDomain.replace(/^www\./, "");
 
