@@ -6,7 +6,7 @@ import type { ApiTesterResponse, WorkerIncomingMessage, WorkerOutgoingMessage } 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const WORKER_PATH = path.join(__dirname, "worker/worker.ts");
-const TIMEOUT_MS = 30_000;
+const TIMEOUT_MS = 1800_000;
 
 import type { ApiTesterOptions } from "./types.js";
 
@@ -22,7 +22,7 @@ export function runChecks(
 
     const timeout = setTimeout(() => {
       worker.kill();
-      reject(new Error("Worker timed out after 30s"));
+      reject(new Error("Worker timed out after 1800s"));
     }, TIMEOUT_MS);
 
     worker.on("message", (msg: WorkerOutgoingMessage) => {

@@ -1,4 +1,6 @@
-import type { CheckDefinition, CheckResult } from "../../types.js";
+import type { CapturedRequest } from "../../../../types/index.js";
+import type { CheckResult } from "../../types.js";
+import { StaticCheck } from "../static-check.js";
 
 const SENSITIVE_KEYS = new Set([
   "password",
@@ -16,12 +18,13 @@ const SENSITIVE_KEYS = new Set([
   "client_secret",
 ]);
 
-export const checkSensitiveData: CheckDefinition = {
-  name: "sensitive-data",
-  description: "Flags query parameters with sensitive-looking keys",
-  fn(request) {
-    const { url, method, queryParams } = request;
-    const base = { checkName: "sensitive-data", request: { url, method } };
+export class SensitiveDataCheck extends StaticCheck {
+  readonly name = "sensitive-data";
+  readonly description = "Flags query parameters with sensitive-looking keys";
+
+  protected analyze(request: CapturedRequest): CheckResult[] {
+    const { queryParams } = request;
+    const base = this.base(request);
 
     const results: CheckResult[] = [];
 
@@ -37,5 +40,5 @@ export const checkSensitiveData: CheckDefinition = {
     }
 
     return results;
-  },
-};
+  }
+}

@@ -1,4 +1,6 @@
-import type { CheckDefinition, CheckResult } from "../../types.js";
+import type { CapturedRequest } from "../../../../types/index.js";
+import type { CheckResult } from "../../types.js";
+import { StaticCheck } from "../static-check.js";
 
 const SECURITY_HEADERS = [
   { header: "x-content-type-options", expected: "nosniff" },
@@ -9,12 +11,13 @@ const SECURITY_HEADERS = [
 
 const DOCUMENT_TYPES = new Set(["document", "html"]);
 
-export const checkResponseHeaders: CheckDefinition = {
-  name: "response-headers",
-  description: "Checks for missing security headers on document responses",
-  fn(request) {
-    const { url, method, resourceType, responseHeaders } = request;
-    const base = { checkName: "response-headers", request: { url, method } };
+export class ResponseHeadersCheck extends StaticCheck {
+  readonly name = "response-headers";
+  readonly description = "Checks for missing security headers on document responses";
+
+  protected analyze(request: CapturedRequest): CheckResult[] {
+    const { resourceType, responseHeaders } = request;
+    const base = this.base(request);
 
     if (!DOCUMENT_TYPES.has(resourceType)) {
       return [];
@@ -56,5 +59,5 @@ export const checkResponseHeaders: CheckDefinition = {
     }
 
     return results;
-  },
-};
+  }
+}

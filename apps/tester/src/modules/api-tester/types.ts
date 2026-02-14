@@ -1,4 +1,5 @@
 import type { CapturedRequest } from "../../types/index.js";
+import type { HttpClient } from "./http-client.js";
 
 export type CheckSeverity = "error" | "warning";
 
@@ -16,15 +17,9 @@ export interface ApiTesterOptions {
   fetchTimeoutMs?: number;
 }
 
-export type CheckFn = (
-  request: CapturedRequest,
-  options: ApiTesterOptions,
-) => CheckResult[] | Promise<CheckResult[]>;
-
-export interface CheckDefinition {
-  name: string;
-  description: string;
-  fn: CheckFn;
+export interface CheckContext {
+  httpClient: HttpClient;
+  options: ApiTesterOptions;
 }
 
 export interface ApiTesterRequestBody {

@@ -1,6 +1,11 @@
-import { configureFetch } from "./fetch-wrapper.js";
-import { allChecks } from "../tests/index.js";
-import type { CheckResult, WorkerIncomingMessage, WorkerOutgoingMessage } from "../types.js";
+import { HttpClient } from "../http-client.js";
+import { createChecks } from "../checks/index.js";
+import type {
+  CheckContext,
+  CheckResult,
+  WorkerIncomingMessage,
+  WorkerOutgoingMessage,
+} from "../types.js";
 
 process.on("message", async (msg: WorkerIncomingMessage) => {
   if (msg.type !== "run") return;
@@ -11,14 +16,13 @@ process.on("message", async (msg: WorkerIncomingMessage) => {
 
     const options = msg.options ?? {};
 
-    configureFetch({
-      requestDelayMs: options.requestDelayMs,
-      fetchTimeoutMs: options.fetchTimeoutMs,
-    });
+    const httpClient = new HttpClient(options.requestDelayMs, options.fetchTimeoutMs);
+    const context: CheckContext = { httpClient, options };
+    const checks = createChecks();
 
     for (const request of msg.requests) {
-      for (const check of allChecks) {
-        results.push(...(await check.fn(request, options)));
+      for (const check of checks) {
+        results.push(...(await check.run(request, context)));
       }
     }
 

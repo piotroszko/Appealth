@@ -1,4 +1,4 @@
-import { throttledFetch } from "../../worker/fetch-wrapper.js";
+import type { HttpClient } from "../../http-client.js";
 import type { CheckResult } from "../../types.js";
 import type { ProbePath, ProbeResult } from "./types.js";
 
@@ -11,9 +11,9 @@ const SOFT_404_PATTERNS = [
   /the\s+requested\s+URL\s+was\s+not\s+found/i,
 ];
 
-export async function tryProbe(url: string): Promise<ProbeResult | null> {
+export async function tryProbe(url: string, httpClient: HttpClient): Promise<ProbeResult | null> {
   try {
-    const res = await throttledFetch(url, {
+    const res = await httpClient.fetch(url, {
       method: "GET",
       headers: { "User-Agent": "Mozilla/5.0 (compatible; SecurityScanner/1.0)" },
     });
@@ -58,12 +58,13 @@ export async function runCategory(
   baseUrl: string,
   paths: readonly ProbePath[],
   base: { checkName: string; request: { url: string; method: string } },
+  httpClient: HttpClient,
 ): Promise<CheckResult[]> {
   const results: CheckResult[] = [];
 
   for (const probe of paths) {
     const url = `${baseUrl}/${probe.path}`;
-    const result = await tryProbe(url);
+    const result = await tryProbe(url, httpClient);
     if (!result) continue;
 
     if (isVulnerable(probe, result)) {

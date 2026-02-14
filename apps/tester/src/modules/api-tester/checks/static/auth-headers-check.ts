@@ -1,13 +1,16 @@
-import type { CheckDefinition, CheckResult } from "../../types.js";
+import type { CapturedRequest } from "../../../../types/index.js";
+import type { CheckResult } from "../../types.js";
+import { StaticCheck } from "../static-check.js";
 
 const SENSITIVE_HEADERS = ["authorization", "cookie", "set-cookie"];
 
-export const checkAuthHeaders: CheckDefinition = {
-  name: "auth-headers",
-  description: "Flags Authorization/Cookie headers sent over non-HTTPS connections",
-  fn(request) {
-    const { url, method, requestHeaders } = request;
-    const base = { checkName: "auth-headers", request: { url, method } };
+export class AuthHeadersCheck extends StaticCheck {
+  readonly name = "auth-headers";
+  readonly description = "Flags Authorization/Cookie headers sent over non-HTTPS connections";
+
+  protected analyze(request: CapturedRequest): CheckResult[] {
+    const { url, requestHeaders } = request;
+    const base = this.base(request);
 
     if (!url.startsWith("http://")) {
       return [];
@@ -31,5 +34,5 @@ export const checkAuthHeaders: CheckDefinition = {
     }
 
     return results;
-  },
-};
+  }
+}
