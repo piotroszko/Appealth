@@ -18,11 +18,23 @@ export async function checkResponseQuality(domain: string): Promise<ResponseQual
   const resolutionTimeMs = Math.round(performance.now() - start);
 
   if (resolutionTimeMs < 100) {
-    findings.push({ check: "Resolution time", status: "pass", message: `DNS resolution took ${resolutionTimeMs}ms` });
+    findings.push({
+      check: "Resolution time",
+      status: "pass",
+      message: `DNS resolution took ${resolutionTimeMs}ms`,
+    });
   } else if (resolutionTimeMs < 500) {
-    findings.push({ check: "Resolution time", status: "warn", message: `DNS resolution took ${resolutionTimeMs}ms (>100ms)` });
+    findings.push({
+      check: "Resolution time",
+      status: "warn",
+      message: `DNS resolution took ${resolutionTimeMs}ms (>100ms)`,
+    });
   } else {
-    findings.push({ check: "Resolution time", status: "fail", message: `DNS resolution took ${resolutionTimeMs}ms (>500ms)` });
+    findings.push({
+      check: "Resolution time",
+      status: "fail",
+      message: `DNS resolution took ${resolutionTimeMs}ms (>500ms)`,
+    });
   }
 
   // TTL audit

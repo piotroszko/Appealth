@@ -1,9 +1,6 @@
 import type { MonitorCheckResult } from "./types.js";
 
-export async function checkHealth(
-  url: string,
-  timeoutMs: number,
-): Promise<MonitorCheckResult> {
+export async function checkHealth(url: string, timeoutMs: number): Promise<MonitorCheckResult> {
   const start = performance.now();
 
   try {

@@ -1,10 +1,10 @@
 import { CronJob } from "cron";
-import { BrokenLinksTestRequest } from "@full-tester/db/models/broken-links-test-request.model";
+import { CoverageInitialLoadTestRequest } from "@full-tester/db/models/coverage-initial-load-test-request.model";
+import { CoverageInitialLoadTestResultBucket } from "@full-tester/db/models/coverage-initial-load-test-result-bucket.model";
 import { NetworkRequestBucket } from "@full-tester/db/models/network-request-bucket.model";
-import { BrokenLinkResultBucket } from "@full-tester/db/models/broken-link-result-bucket.model";
-import { checkLinks } from "./check-links.js";
+import { collectCoverage } from "./collect-coverage.js";
 import type { CapturedRequest } from "../../types/index.js";
-import type { BrokenLinkResult, BrokenLinksOptions } from "./types.js";
+import type { CoverageOptions, FileCoverageResult } from "./types.js";
 
 const RESULT_BUCKET_SIZE = 500;
 
@@ -15,7 +15,7 @@ async function processNextRequest() {
   isProcessing = true;
 
   try {
-    const request = await BrokenLinksTestRequest.findOneAndUpdate(
+    const request = await CoverageInitialLoadTestRequest.findOneAndUpdate(
       { status: "pending" },
       { $set: { status: "running", startedAt: new Date() } },
       { sort: { createdAt: 1 }, new: true },
@@ -24,13 +24,13 @@ async function processNextRequest() {
     if (!request) return;
 
     const buckets = await NetworkRequestBucket.find({
-      brokenLinksTestRequestId: request._id,
+      coverageInitialLoadTestRequestId: request._id,
     });
 
     const capturedRequests = buckets.flatMap((b) => (b.requests as CapturedRequest[]) ?? []);
 
     if (capturedRequests.length === 0) {
-      await BrokenLinksTestRequest.updateOne(
+      await CoverageInitialLoadTestRequest.updateOne(
         { _id: request._id },
         {
           $set: {
@@ -43,17 +43,19 @@ async function processNextRequest() {
       return;
     }
 
-    const options: BrokenLinksOptions = {
-      averageFrom: (request.options?.averageFrom as number) ?? 1,
-      allowedDomains: (request.options?.allowedDomains as string[]) ?? [],
-      averageFromForNotAllowed: (request.options?.averageFromForNotAllowed as number) ?? 1,
+    const urls = [...new Set(capturedRequests.map((r) => r.url))];
+
+    const options: CoverageOptions = {
+      waitUntil: (request.options?.waitUntil as CoverageOptions["waitUntil"]) ?? "load",
+      timeoutMs: (request.options?.timeoutMs as number) ?? 30000,
+      includeThirdParty: (request.options?.includeThirdParty as boolean) ?? true,
     };
 
-    const result = await checkLinks(capturedRequests, options);
+    const result = await collectCoverage(urls, request.domain as string, options);
 
     await saveResultBuckets(request._id as string, result.results);
 
-    await BrokenLinksTestRequest.updateOne(
+    await CoverageInitialLoadTestRequest.updateOne(
       { _id: request._id },
       {
         $set: {
@@ -64,21 +66,24 @@ async function processNextRequest() {
       },
     );
 
-    console.log(`Completed broken links test ${request._id} for ${request.domain}`);
+    console.log(`Completed initial load coverage test ${request._id} for ${request.domain}`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Broken links cron processing error:", message);
+    console.error("Initial load coverage cron processing error:", message);
   } finally {
     isProcessing = false;
   }
 }
 
-async function saveResultBuckets(brokenLinksTestRequestId: string, results: BrokenLinkResult[]) {
+async function saveResultBuckets(
+  coverageInitialLoadTestRequestId: string,
+  results: FileCoverageResult[],
+) {
   for (let i = 0; i < results.length; i += RESULT_BUCKET_SIZE) {
     const chunk = results.slice(i, i + RESULT_BUCKET_SIZE);
-    await BrokenLinkResultBucket.create({
+    await CoverageInitialLoadTestResultBucket.create({
       _id: crypto.randomUUID(),
-      brokenLinksTestRequestId,
+      coverageInitialLoadTestRequestId,
       results: chunk,
     });
   }
@@ -87,7 +92,7 @@ async function saveResultBuckets(brokenLinksTestRequestId: string, results: Brok
 async function recoverStaleRequests() {
   const thirtyFiveMinutesAgo = new Date(Date.now() - 35 * 60 * 1000);
 
-  const result = await BrokenLinksTestRequest.updateMany(
+  const result = await CoverageInitialLoadTestRequest.updateMany(
     { status: "running", startedAt: { $lt: thirtyFiveMinutesAgo } },
     {
       $set: {
@@ -99,16 +104,16 @@ async function recoverStaleRequests() {
   );
 
   if (result.modifiedCount > 0) {
-    console.log(`Recovered ${result.modifiedCount} stale broken links request(s)`);
+    console.log(`Recovered ${result.modifiedCount} stale initial load coverage request(s)`);
   }
 }
 
-export function startBrokenLinksCron() {
+export function startCoverageCron() {
   const processingJob = new CronJob("* * * * *", processNextRequest);
   processingJob.start();
-  console.log("Broken links cron started (every 1 minute)");
+  console.log("Initial load coverage cron started (every 1 minute)");
 
   const recoveryJob = new CronJob("*/10 * * * *", recoverStaleRequests);
   recoveryJob.start();
-  console.log("Broken links stale recovery cron started (every 10 minutes)");
+  console.log("Initial load coverage stale recovery cron started (every 10 minutes)");
 }

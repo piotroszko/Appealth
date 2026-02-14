@@ -39,7 +39,7 @@ async function runVnuCheck(html: string): Promise<VnuMessage[]> {
     }
     throw error;
   } finally {
-    await unlink(tempFile).catch(() => { });
+    await unlink(tempFile).catch(() => {});
   }
 }
 

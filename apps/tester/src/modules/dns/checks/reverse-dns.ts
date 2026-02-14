@@ -33,7 +33,11 @@ export async function checkReverseDns(aRecords: string[]): Promise<ReverseDnsRes
   const findings: CheckFinding[] = [];
 
   if (aRecords.length === 0) {
-    findings.push({ check: "Reverse DNS", status: "info", message: "No A records to check reverse DNS" });
+    findings.push({
+      check: "Reverse DNS",
+      status: "info",
+      message: "No A records to check reverse DNS",
+    });
     return { entries: [], findings };
   }
 
@@ -46,7 +50,11 @@ export async function checkReverseDns(aRecords: string[]): Promise<ReverseDnsRes
     entries.push(entry);
 
     if (entry.ptrHostnames.length === 0) {
-      findings.push({ check: "Reverse DNS", status: "info", message: `No PTR record for ${entry.ip}` });
+      findings.push({
+        check: "Reverse DNS",
+        status: "info",
+        message: `No PTR record for ${entry.ip}`,
+      });
     } else if (entry.forwardConfirmed) {
       findings.push({
         check: "Reverse DNS",

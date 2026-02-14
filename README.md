@@ -4,18 +4,18 @@ A comprehensive website testing, security analysis, and monitoring platform buil
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js 16, React 19, TailwindCSS 4, shadcn/ui |
-| Backend (web) | tRPC v11, Next.js API routes |
-| Backend (tester) | Express 5, Playwright |
-| Database | MongoDB, Mongoose 8 |
-| Auth | Better-Auth, Polar payments |
-| AI | AI SDK (Groq) |
-| Deployment | Cloudflare Workers (OpenNext + Alchemy) |
-| Monorepo | npm workspaces, Turborepo |
-| Linting/Formatting | Oxlint, Oxfmt |
-| Language | TypeScript 5 (ESM throughout) |
+| Layer              | Technology                                     |
+| ------------------ | ---------------------------------------------- |
+| Frontend           | Next.js 16, React 19, TailwindCSS 4, shadcn/ui |
+| Backend (web)      | tRPC v11, Next.js API routes                   |
+| Backend (tester)   | Express 5, Playwright                          |
+| Database           | MongoDB, Mongoose 8                            |
+| Auth               | Better-Auth, Polar payments                    |
+| AI                 | AI SDK (Groq)                                  |
+| Deployment         | Cloudflare Workers (OpenNext + Alchemy)        |
+| Monorepo           | npm workspaces, Turborepo                      |
+| Linting/Formatting | Oxlint, Oxfmt                                  |
+| Language           | TypeScript 5 (ESM throughout)                  |
 
 ## Getting Started
 
@@ -36,11 +36,11 @@ npm install
 
 The project uses typed, Zod-validated environment variables via `@t3-oss/env-core`. There are three separate configs:
 
-| Config | File | Used by |
-|---|---|---|
-| `@full-tester/env/server` | `packages/env/src/server.ts` | Web app backend (tRPC, API routes) |
-| `@full-tester/env/web` | `packages/env/src/web.ts` | Web app client (Next.js public vars) |
-| `@full-tester/env/tester` | `packages/env/src/tester.ts` | Tester Express API |
+| Config                    | File                         | Used by                              |
+| ------------------------- | ---------------------------- | ------------------------------------ |
+| `@full-tester/env/server` | `packages/env/src/server.ts` | Web app backend (tRPC, API routes)   |
+| `@full-tester/env/web`    | `packages/env/src/web.ts`    | Web app client (Next.js public vars) |
+| `@full-tester/env/tester` | `packages/env/src/tester.ts` | Tester Express API                   |
 
 Create `.env` files in:
 
@@ -108,15 +108,15 @@ The tester API is organized into feature modules under `apps/tester/src/modules/
 
 **`/api-tester`** — Runs 20+ automated security checks against discovered endpoints. Checks are organized by category:
 
-| Category | Checks |
-|---|---|
-| Static Analysis | Response headers, HTTPS enforcement, status codes, auth headers |
-| Injection | SQL injection, NoSQL injection, command injection, SSTI |
-| Cross-Site Scripting | Reflected XSS, DOM-based XSS |
-| Authentication | JWT analysis, cookie security |
-| Access Control | CORS misconfiguration, open redirect, SSRF |
-| Data Exposure | Sensitive data patterns, HTTP method tampering |
-| Predefined URLs | Common sensitive paths and endpoints |
+| Category             | Checks                                                          |
+| -------------------- | --------------------------------------------------------------- |
+| Static Analysis      | Response headers, HTTPS enforcement, status codes, auth headers |
+| Injection            | SQL injection, NoSQL injection, command injection, SSTI         |
+| Cross-Site Scripting | Reflected XSS, DOM-based XSS                                    |
+| Authentication       | JWT analysis, cookie security                                   |
+| Access Control       | CORS misconfiguration, open redirect, SSRF                      |
+| Data Exposure        | Sensitive data patterns, HTTP method tampering                  |
+| Predefined URLs      | Common sensitive paths and endpoints                            |
 
 Results are stored using a bucketing strategy in MongoDB for query efficiency.
 

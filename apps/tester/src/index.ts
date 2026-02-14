@@ -9,6 +9,7 @@ import { sslTlsRouter } from "./modules/ssl-tls/index.js";
 import { startApiTesterCron } from "./modules/api-tester/cron.js";
 import { startBrokenLinksCron } from "./modules/broken-links/cron.js";
 import { startMonitorCron } from "./modules/monitor/cron.js";
+import { startCoverageCron } from "./modules/initial-load-coverage/cron.js";
 
 await mongoose.connect(env.DATABASE_URL);
 console.log("Connected to MongoDB");
@@ -33,4 +34,5 @@ app.listen(port, () => {
   startApiTesterCron();
   startBrokenLinksCron();
   startMonitorCron();
+  startCoverageCron();
 });

@@ -1,14 +1,7 @@
 import type { CapturedRequest } from "../../types/index.js";
-import type {
-  BrokenLinksOptions,
-  FetchTimingMetrics,
-  SingleFetchResult,
-} from "./types.js";
+import type { BrokenLinksOptions, FetchTimingMetrics, SingleFetchResult } from "./types.js";
 
-export function isAllowedDomain(
-  url: string,
-  domains: string[] | undefined,
-): boolean {
+export function isAllowedDomain(url: string, domains: string[] | undefined): boolean {
   if (!domains || domains.length === 0) return false;
   try {
     const hostname = new URL(url).hostname;
@@ -18,9 +11,7 @@ export function isAllowedDomain(
   }
 }
 
-export function extractUniqueUrls(
-  capturedRequests: CapturedRequest[],
-): Map<string, string[]> {
+export function extractUniqueUrls(capturedRequests: CapturedRequest[]): Map<string, string[]> {
   const urlMap = new Map<string, string[]>();
 
   for (const req of capturedRequests) {
@@ -40,9 +31,7 @@ export function extractUniqueUrls(
   return urlMap;
 }
 
-export function averageMetrics(
-  results: SingleFetchResult[],
-): FetchTimingMetrics {
+export function averageMetrics(results: SingleFetchResult[]): FetchTimingMetrics {
   const successful = results.filter((r) => r.error === null);
   if (successful.length === 0) {
     return {
@@ -88,19 +77,17 @@ export function averageMetrics(
   };
 }
 
-export function determineFetchCount(
-  url: string,
-  options: BrokenLinksOptions,
-): number {
+export function determineFetchCount(url: string, options: BrokenLinksOptions): number {
   if (isAllowedDomain(url, options.allowedDomains)) {
     return options.averageFrom;
   }
   return options.averageFromForNotAllowed;
 }
 
-export function determineBrokenStatus(
-  results: SingleFetchResult[],
-): { status: "healthy" | "broken"; reason?: string } {
+export function determineBrokenStatus(results: SingleFetchResult[]): {
+  status: "healthy" | "broken";
+  reason?: string;
+} {
   if (results.length === 0) {
     return { status: "broken", reason: "No fetch results" };
   }

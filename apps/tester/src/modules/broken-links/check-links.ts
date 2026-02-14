@@ -53,16 +53,19 @@ export async function fetchWithMetrics(
     const transport = isHttps ? https : http;
     const agent = new (isHttps ? https.Agent : http.Agent)({ keepAlive: false });
 
-    const result = await new Promise<{
-      statusCode: number;
-      headers: http.IncomingHttpHeaders;
-      contentLength: number;
-      hopDns: number;
-      hopTcp: number;
-      hopTls: number;
-      hopTtfb: number;
-      hopDownload: number;
-    } | { error: string }>((resolve) => {
+    const result = await new Promise<
+      | {
+          statusCode: number;
+          headers: http.IncomingHttpHeaders;
+          contentLength: number;
+          hopDns: number;
+          hopTcp: number;
+          hopTls: number;
+          hopTtfb: number;
+          hopDownload: number;
+        }
+      | { error: string }
+    >((resolve) => {
       const hopStart = performance.now();
       let hopDns = 0;
       let hopTcp = 0;
@@ -153,9 +156,7 @@ export async function fetchWithMetrics(
     if (statusCode >= 300 && statusCode < 400 && result.headers.location) {
       redirectChain.push(currentUrl);
       const location = result.headers.location;
-      currentUrl = location.startsWith("http")
-        ? location
-        : new URL(location, currentUrl).href;
+      currentUrl = location.startsWith("http") ? location : new URL(location, currentUrl).href;
       continue;
     }
 

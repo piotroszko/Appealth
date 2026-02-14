@@ -33,9 +33,6 @@ const brokenLinksTestRequestSchema = new Schema(
 
 brokenLinksTestRequestSchema.index({ status: 1, createdAt: 1 });
 
-const BrokenLinksTestRequest = model(
-  "BrokenLinksTestRequest",
-  brokenLinksTestRequestSchema,
-);
+const BrokenLinksTestRequest = model("BrokenLinksTestRequest", brokenLinksTestRequestSchema);
 
 export { BrokenLinksTestRequest };

@@ -10,7 +10,11 @@ const PROTOCOLS: { version: TlsVersion; label: string; deprecated: boolean }[] =
   { version: "TLSv1.3", label: "TLS 1.3", deprecated: false },
 ];
 
-function testProtocol(hostname: string, port: number, version: TlsVersion): Promise<boolean | null> {
+function testProtocol(
+  hostname: string,
+  port: number,
+  version: TlsVersion,
+): Promise<boolean | null> {
   return new Promise((resolve) => {
     const socket = tls.connect(
       {
@@ -31,7 +35,11 @@ function testProtocol(hostname: string, port: number, version: TlsVersion): Prom
     socket.on("error", (err) => {
       const msg = err.message.toLowerCase();
       // Node/OpenSSL may refuse to use TLS 1.0/1.1 client-side
-      if (msg.includes("unsupported protocol") || msg.includes("no protocols available") || msg.includes("version too low")) {
+      if (
+        msg.includes("unsupported protocol") ||
+        msg.includes("no protocols available") ||
+        msg.includes("version too low")
+      ) {
         resolve(null); // inconclusive
       } else {
         resolve(false);
@@ -57,7 +65,10 @@ function getNegotiatedProtocol(hostname: string, port: number): Promise<string |
     );
 
     socket.on("error", () => resolve(null));
-    socket.on("timeout", () => { socket.destroy(); resolve(null); });
+    socket.on("timeout", () => {
+      socket.destroy();
+      resolve(null);
+    });
   });
 }
 
@@ -86,30 +97,54 @@ export async function checkProtocols(hostname: string, port: number): Promise<Pr
     const supported = result.status === "fulfilled" ? result.value : false;
 
     if (supported === null) {
-      findings.push({ check: p.label, status: "info", message: `${p.label} support inconclusive (client-side restriction)` });
+      findings.push({
+        check: p.label,
+        status: "info",
+        message: `${p.label} support inconclusive (client-side restriction)`,
+      });
       continue;
     }
 
     switch (p.version) {
       case "TLSv1":
-        findings.push(supported
-          ? { check: p.label, status: "fail", message: "TLS 1.0 is supported (insecure, should be disabled)" }
-          : { check: p.label, status: "pass", message: "TLS 1.0 is not supported" });
+        findings.push(
+          supported
+            ? {
+                check: p.label,
+                status: "fail",
+                message: "TLS 1.0 is supported (insecure, should be disabled)",
+              }
+            : { check: p.label, status: "pass", message: "TLS 1.0 is not supported" },
+        );
         break;
       case "TLSv1.1":
-        findings.push(supported
-          ? { check: p.label, status: "warn", message: "TLS 1.1 is supported (deprecated, should be disabled)" }
-          : { check: p.label, status: "pass", message: "TLS 1.1 is not supported" });
+        findings.push(
+          supported
+            ? {
+                check: p.label,
+                status: "warn",
+                message: "TLS 1.1 is supported (deprecated, should be disabled)",
+              }
+            : { check: p.label, status: "pass", message: "TLS 1.1 is not supported" },
+        );
         break;
       case "TLSv1.2":
-        findings.push(supported
-          ? { check: p.label, status: "pass", message: "TLS 1.2 is supported" }
-          : { check: p.label, status: "fail", message: "TLS 1.2 is not supported (required for compatibility)" });
+        findings.push(
+          supported
+            ? { check: p.label, status: "pass", message: "TLS 1.2 is supported" }
+            : {
+                check: p.label,
+                status: "fail",
+                message: "TLS 1.2 is not supported (required for compatibility)",
+              },
+        );
         break;
       case "TLSv1.3":
-        findings.push(supported
-          ? { check: p.label, status: "pass", message: "TLS 1.3 is supported" }
-          : { check: p.label, status: "warn", message: "TLS 1.3 is not supported (recommended)" });
+        findings.push(
+          supported
+            ? { check: p.label, status: "pass", message: "TLS 1.3 is supported" }
+            : { check: p.label, status: "warn", message: "TLS 1.3 is not supported (recommended)" },
+        );
         break;
     }
   }

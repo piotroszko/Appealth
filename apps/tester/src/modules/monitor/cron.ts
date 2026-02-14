@@ -16,7 +16,12 @@ function computeNextCheckAt(intervalMs: number, varianceMs: number): Date {
 
 async function saveResult(
   monitoredPageId: string,
-  result: { checkedAt: Date; statusCode: number | null; responseTimeMs: number; error: string | null },
+  result: {
+    checkedAt: Date;
+    statusCode: number | null;
+    responseTimeMs: number;
+    error: string | null;
+  },
 ) {
   const updated = await MonitorResultBucket.findOneAndUpdate(
     { monitoredPageId, count: { $lt: RESULT_BUCKET_SIZE } },
@@ -57,10 +62,7 @@ async function processMonitorTick() {
     await Promise.allSettled(
       claimed.map(async (page) => {
         try {
-          const result = await checkHealth(
-            page.url,
-            page.timeoutMs ?? 30000,
-          );
+          const result = await checkHealth(page.url, page.timeoutMs ?? 30000);
 
           const checkedAt = new Date();
 
@@ -71,7 +73,8 @@ async function processMonitorTick() {
             error: result.error,
           });
 
-          const isFailure = result.error !== null || result.statusCode === null || result.statusCode >= 400;
+          const isFailure =
+            result.error !== null || result.statusCode === null || result.statusCode >= 400;
 
           await MonitoredPage.updateOne(
             { _id: page._id },

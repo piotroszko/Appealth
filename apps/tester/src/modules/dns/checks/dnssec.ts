@@ -2,7 +2,12 @@ import dgram from "node:dgram";
 import dnsPacket from "dns-packet";
 import type { DnssecResult, CheckFinding } from "../types.js";
 
-function sendDnsQuery(buf: Buffer, server: string, port: number, timeoutMs: number): Promise<Buffer> {
+function sendDnsQuery(
+  buf: Buffer,
+  server: string,
+  port: number,
+  timeoutMs: number,
+): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const socket = dgram.createSocket("udp4");
     const timer = setTimeout(() => {
@@ -85,11 +90,23 @@ export async function checkDnssec(domain: string): Promise<DnssecResult> {
     const enabled = hasRrsig || adFlagValidated;
 
     if (adFlagValidated) {
-      findings.push({ check: "DNSSEC", status: "pass", message: "DNSSEC is enabled and validated (AD flag set)" });
+      findings.push({
+        check: "DNSSEC",
+        status: "pass",
+        message: "DNSSEC is enabled and validated (AD flag set)",
+      });
     } else if (hasRrsig) {
-      findings.push({ check: "DNSSEC", status: "warn", message: "DNSSEC signatures (RRSIG) present but validation failed (AD flag not set)" });
+      findings.push({
+        check: "DNSSEC",
+        status: "warn",
+        message: "DNSSEC signatures (RRSIG) present but validation failed (AD flag not set)",
+      });
     } else {
-      findings.push({ check: "DNSSEC", status: "info", message: "DNSSEC is not enabled for this domain" });
+      findings.push({
+        check: "DNSSEC",
+        status: "info",
+        message: "DNSSEC is not enabled for this domain",
+      });
     }
 
     return { enabled, hasRrsig, adFlag: adFlagValidated, findings };

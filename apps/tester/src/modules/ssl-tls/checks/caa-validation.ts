@@ -6,18 +6,18 @@ resolver.setServers(["8.8.8.8", "1.1.1.1"]);
 
 const CA_ORG_TO_CAA: Record<string, string[]> = {
   "let's encrypt": ["letsencrypt.org"],
-  "digicert": ["digicert.com", "symantec.com"],
-  "comodo": ["comodoca.com", "sectigo.com"],
-  "sectigo": ["sectigo.com", "comodoca.com"],
-  "globalsign": ["globalsign.com"],
-  "godaddy": ["godaddy.com", "starfieldtech.com"],
-  "amazon": ["amazon.com", "amazontrust.com"],
-  "google": ["pki.goog", "google.com"],
-  "cloudflare": ["cloudflaressl.com", "digicert.com", "letsencrypt.org", "pki.goog", "sectigo.com"],
-  "microsoft": ["microsoft.com"],
-  "entrust": ["entrust.net"],
-  "buypass": ["buypass.com"],
-  "zerossl": ["sectigo.com", "zerossl.com"],
+  digicert: ["digicert.com", "symantec.com"],
+  comodo: ["comodoca.com", "sectigo.com"],
+  sectigo: ["sectigo.com", "comodoca.com"],
+  globalsign: ["globalsign.com"],
+  godaddy: ["godaddy.com", "starfieldtech.com"],
+  amazon: ["amazon.com", "amazontrust.com"],
+  google: ["pki.goog", "google.com"],
+  cloudflare: ["cloudflaressl.com", "digicert.com", "letsencrypt.org", "pki.goog", "sectigo.com"],
+  microsoft: ["microsoft.com"],
+  entrust: ["entrust.net"],
+  buypass: ["buypass.com"],
+  zerossl: ["sectigo.com", "zerossl.com"],
 };
 
 function matchIssuerToCaa(issuerOrg: string, caaIssueDomains: string[]): boolean {
@@ -33,15 +33,16 @@ function matchIssuerToCaa(issuerOrg: string, caaIssueDomains: string[]): boolean
   return caaIssueDomains.some((caa) => orgLower.includes(caa) || caa.includes(orgLower));
 }
 
-export async function checkCaaValidation(hostname: string, issuerOrg: string | null): Promise<CaaValidationResult> {
+export async function checkCaaValidation(
+  hostname: string,
+  issuerOrg: string | null,
+): Promise<CaaValidationResult> {
   const findings: CheckFinding[] = [];
 
   let caaRecords: string[] = [];
   try {
     const records = await resolver.resolveCaa(hostname);
-    caaRecords = records
-      .filter((r) => r.issue)
-      .map((r) => r.issue!);
+    caaRecords = records.filter((r) => r.issue).map((r) => r.issue!);
   } catch {
     // No CAA records or NXDOMAIN
   }

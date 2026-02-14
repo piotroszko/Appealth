@@ -6,7 +6,9 @@ import type { MisconfigurationResult, CheckFinding } from "../types.js";
 const resolver = new Resolver();
 resolver.setServers(["8.8.8.8", "1.1.1.1"]);
 
-async function checkDanglingCnames(cnameRecords: string[]): Promise<{ dangling: { cname: string; target: string }[]; findings: CheckFinding[] }> {
+async function checkDanglingCnames(
+  cnameRecords: string[],
+): Promise<{ dangling: { cname: string; target: string }[]; findings: CheckFinding[] }> {
   const findings: CheckFinding[] = [];
   const dangling: { cname: string; target: string }[] = [];
 
@@ -15,15 +17,27 @@ async function checkDanglingCnames(cnameRecords: string[]): Promise<{ dangling: 
       await resolver.resolve4(target);
       // Resolves fine — not dangling
     } catch (err) {
-      if (err instanceof Error && "code" in err && (err as NodeJS.ErrnoException).code === "ENOTFOUND") {
+      if (
+        err instanceof Error &&
+        "code" in err &&
+        (err as NodeJS.ErrnoException).code === "ENOTFOUND"
+      ) {
         dangling.push({ cname: target, target });
-        findings.push({ check: "Dangling CNAME", status: "fail", message: `CNAME target ${target} resolves to NXDOMAIN` });
+        findings.push({
+          check: "Dangling CNAME",
+          status: "fail",
+          message: `CNAME target ${target} resolves to NXDOMAIN`,
+        });
       }
     }
   }
 
   if (cnameRecords.length > 0 && dangling.length === 0) {
-    findings.push({ check: "Dangling CNAME", status: "pass", message: "No dangling CNAME records detected" });
+    findings.push({
+      check: "Dangling CNAME",
+      status: "pass",
+      message: "No dangling CNAME records detected",
+    });
   }
 
   return { dangling, findings };
@@ -45,7 +59,9 @@ async function resolveNsIps(nsRecords: string[]): Promise<{ nameserver: string; 
   return results;
 }
 
-async function checkOpenResolvers(nsRecords: string[]): Promise<{ open: { nameserver: string; ip: string }[]; findings: CheckFinding[] }> {
+async function checkOpenResolvers(
+  nsRecords: string[],
+): Promise<{ open: { nameserver: string; ip: string }[]; findings: CheckFinding[] }> {
   const findings: CheckFinding[] = [];
   const open: { nameserver: string; ip: string }[] = [];
   const nsWithIps = await resolveNsIps(nsRecords);
@@ -77,7 +93,11 @@ async function checkOpenResolvers(nsRecords: string[]): Promise<{ open: { namese
   }
 
   if (nsWithIps.length > 0 && open.length === 0) {
-    findings.push({ check: "Open resolver", status: "pass", message: "No nameservers acting as open resolvers" });
+    findings.push({
+      check: "Open resolver",
+      status: "pass",
+      message: "No nameservers acting as open resolvers",
+    });
   }
 
   return { open, findings };
@@ -136,7 +156,10 @@ function attemptAxfr(ip: string, domain: string, timeoutMs: number): Promise<boo
   });
 }
 
-async function checkAxfrExposure(nsRecords: string[], domain: string): Promise<{ exposed: { nameserver: string; ip: string }[]; findings: CheckFinding[] }> {
+async function checkAxfrExposure(
+  nsRecords: string[],
+  domain: string,
+): Promise<{ exposed: { nameserver: string; ip: string }[]; findings: CheckFinding[] }> {
   const findings: CheckFinding[] = [];
   const exposed: { nameserver: string; ip: string }[] = [];
   const nsWithIps = await resolveNsIps(nsRecords);
@@ -161,7 +184,11 @@ async function checkAxfrExposure(nsRecords: string[], domain: string): Promise<{
   }
 
   if (nsWithIps.length > 0 && exposed.length === 0) {
-    findings.push({ check: "AXFR exposure", status: "pass", message: "No nameservers allow zone transfers" });
+    findings.push({
+      check: "AXFR exposure",
+      status: "pass",
+      message: "No nameservers allow zone transfers",
+    });
   }
 
   return { exposed, findings };
@@ -178,8 +205,12 @@ export async function checkMisconfigurations(
     checkAxfrExposure(nsRecords, domain),
   ]);
 
-  const dangling = danglingResult.status === "fulfilled" ? danglingResult.value : { dangling: [], findings: [] };
-  const openResolvers = openResolverResult.status === "fulfilled" ? openResolverResult.value : { open: [], findings: [] };
+  const dangling =
+    danglingResult.status === "fulfilled" ? danglingResult.value : { dangling: [], findings: [] };
+  const openResolvers =
+    openResolverResult.status === "fulfilled"
+      ? openResolverResult.value
+      : { open: [], findings: [] };
   const axfr = axfrResult.status === "fulfilled" ? axfrResult.value : { exposed: [], findings: [] };
 
   return {

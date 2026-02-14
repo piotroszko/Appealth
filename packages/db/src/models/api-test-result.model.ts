@@ -31,9 +31,6 @@ const apiTestResultBucketSchema = new Schema(
 
 apiTestResultBucketSchema.index({ apiTestRequestId: 1 });
 
-const ApiTestResultBucket = model(
-  "ApiTestResultBucket",
-  apiTestResultBucketSchema,
-);
+const ApiTestResultBucket = model("ApiTestResultBucket", apiTestResultBucketSchema);
 
 export { ApiTestResultBucket };

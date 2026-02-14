@@ -27,9 +27,7 @@ async function processNextRequest() {
       apiTestRequestId: request._id,
     });
 
-    const capturedRequests = buckets.flatMap(
-      (b) => (b.requests as CapturedRequest[]) ?? [],
-    );
+    const capturedRequests = buckets.flatMap((b) => (b.requests as CapturedRequest[]) ?? []);
 
     if (capturedRequests.length === 0) {
       await ApiTestRequest.updateOne(
@@ -83,7 +81,13 @@ async function recoverStaleRequests() {
 
   const result = await ApiTestRequest.updateMany(
     { status: "running", startedAt: { $lt: thirtyFiveMinutesAgo } },
-    { $set: { status: "failed", error: "Timed out — stuck in running state", completedAt: new Date() } },
+    {
+      $set: {
+        status: "failed",
+        error: "Timed out — stuck in running state",
+        completedAt: new Date(),
+      },
+    },
   );
 
   if (result.modifiedCount > 0) {

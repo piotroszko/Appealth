@@ -23,41 +23,67 @@ export async function runDnsHealthCheck(domain: string): Promise<DnsHealthCheckR
   const records = await checkRecords(domain);
 
   // Phase 2: Independent checks in parallel
-  const [emailSecurity, dnssec, nameserverHealth, reverseDns, responseQuality] = await Promise.allSettled([
-    checkEmailSecurity(domain),
-    checkDnssec(domain),
-    checkNameserverHealth(domain, records.ns),
-    checkReverseDns(records.a),
-    checkResponseQuality(domain),
-  ]);
+  const [emailSecurity, dnssec, nameserverHealth, reverseDns, responseQuality] =
+    await Promise.allSettled([
+      checkEmailSecurity(domain),
+      checkDnssec(domain),
+      checkNameserverHealth(domain, records.ns),
+      checkReverseDns(records.a),
+      checkResponseQuality(domain),
+    ]);
 
-  const emailSecurityResult = emailSecurity.status === "fulfilled"
-    ? emailSecurity.value
-    : { spf: { raw: null, mechanisms: [], dnsLookupCount: 0, hasAll: false, allQualifier: null }, dmarc: { raw: null, policy: null, subdomainPolicy: null, adkim: null, aspf: null, rua: null, ruf: null }, dkim: { foundSelectors: [], checkedSelectors: [] }, findings: [] };
+  const emailSecurityResult =
+    emailSecurity.status === "fulfilled"
+      ? emailSecurity.value
+      : {
+          spf: { raw: null, mechanisms: [], dnsLookupCount: 0, hasAll: false, allQualifier: null },
+          dmarc: {
+            raw: null,
+            policy: null,
+            subdomainPolicy: null,
+            adkim: null,
+            aspf: null,
+            rua: null,
+            ruf: null,
+          },
+          dkim: { foundSelectors: [], checkedSelectors: [] },
+          findings: [],
+        };
 
-  const dnssecResult = dnssec.status === "fulfilled"
-    ? dnssec.value
-    : { enabled: false, hasRrsig: false, adFlag: false, findings: [] };
+  const dnssecResult =
+    dnssec.status === "fulfilled"
+      ? dnssec.value
+      : { enabled: false, hasRrsig: false, adFlag: false, findings: [] };
 
-  const nameserverHealthResult = nameserverHealth.status === "fulfilled"
-    ? nameserverHealth.value
-    : { probes: [], soaSerialsConsistent: false, delegationConsistent: null, parentNs: [], authoritativeNs: [], findings: [] };
+  const nameserverHealthResult =
+    nameserverHealth.status === "fulfilled"
+      ? nameserverHealth.value
+      : {
+          probes: [],
+          soaSerialsConsistent: false,
+          delegationConsistent: null,
+          parentNs: [],
+          authoritativeNs: [],
+          findings: [],
+        };
 
-  const reverseDnsResult = reverseDns.status === "fulfilled"
-    ? reverseDns.value
-    : { entries: [], findings: [] };
+  const reverseDnsResult =
+    reverseDns.status === "fulfilled" ? reverseDns.value : { entries: [], findings: [] };
 
-  const responseQualityResult = responseQuality.status === "fulfilled"
-    ? responseQuality.value
-    : { resolutionTimeMs: 0, ttls: [], findings: [] };
+  const responseQualityResult =
+    responseQuality.status === "fulfilled"
+      ? responseQuality.value
+      : { resolutionTimeMs: 0, ttls: [], findings: [] };
 
   // Phase 3: Misconfigurations (needs CNAME + NS data)
-  const misconfigurations = await checkMisconfigurations(domain, records.cname, records.ns).catch(() => ({
-    danglingCnames: [],
-    openResolvers: [],
-    axfrExposed: [],
-    findings: [] as CheckFinding[],
-  }));
+  const misconfigurations = await checkMisconfigurations(domain, records.cname, records.ns).catch(
+    () => ({
+      danglingCnames: [],
+      openResolvers: [],
+      axfrExposed: [],
+      findings: [] as CheckFinding[],
+    }),
+  );
 
   // Aggregate all findings
   const allFindings = [

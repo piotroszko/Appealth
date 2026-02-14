@@ -1,14 +1,34 @@
 import { Resolver } from "node:dns/promises";
-import type { EmailSecurityResult, SpfResult, DmarcResult, DkimResult, CheckFinding } from "../types.js";
+import type {
+  EmailSecurityResult,
+  SpfResult,
+  DmarcResult,
+  DkimResult,
+  CheckFinding,
+} from "../types.js";
 
 const resolver = new Resolver();
 resolver.setServers(["8.8.8.8", "1.1.1.1"]);
 
 const DKIM_SELECTORS = [
-  "default", "google", "selector1", "selector2",
-  "k1", "k2", "dkim", "mail", "s1", "s2",
-  "protonmail", "smtp", "mandrill", "amazonses",
-  "cm", "mxvault", "zendesk1", "zendesk2",
+  "default",
+  "google",
+  "selector1",
+  "selector2",
+  "k1",
+  "k2",
+  "dkim",
+  "mail",
+  "s1",
+  "s2",
+  "protonmail",
+  "smtp",
+  "mandrill",
+  "amazonses",
+  "cm",
+  "mxvault",
+  "zendesk1",
+  "zendesk2",
 ];
 
 // Mechanisms that trigger DNS lookups per RFC 7208
@@ -42,11 +62,18 @@ async function checkSpf(domain: string): Promise<{ spf: SpfResult; findings: Che
 
   if (spfRecords.length === 0) {
     findings.push({ check: "SPF", status: "warn", message: "No SPF record found" });
-    return { spf: { raw: null, mechanisms: [], dnsLookupCount: 0, hasAll: false, allQualifier: null }, findings };
+    return {
+      spf: { raw: null, mechanisms: [], dnsLookupCount: 0, hasAll: false, allQualifier: null },
+      findings,
+    };
   }
 
   if (spfRecords.length > 1) {
-    findings.push({ check: "SPF", status: "fail", message: `Multiple SPF records found (${spfRecords.length}) — violates RFC 7208` });
+    findings.push({
+      check: "SPF",
+      status: "fail",
+      message: `Multiple SPF records found (${spfRecords.length}) — violates RFC 7208`,
+    });
   }
 
   const raw = spfRecords[0]!;
@@ -55,16 +82,27 @@ async function checkSpf(domain: string): Promise<{ spf: SpfResult; findings: Che
   // Count DNS lookups
   let dnsLookupCount = 0;
   for (const mech of mechanisms) {
-    const mechName = mech.replace(/^[+\-~?]/, "").split(":")[0]!.split("/")[0]!;
+    const mechName = mech
+      .replace(/^[+\-~?]/, "")
+      .split(":")[0]!
+      .split("/")[0]!;
     if (DNS_LOOKUP_MECHANISMS.includes(mechName)) {
       dnsLookupCount++;
     }
   }
 
   if (dnsLookupCount > 10) {
-    findings.push({ check: "SPF lookup count", status: "warn", message: `SPF uses ${dnsLookupCount} DNS lookups (max 10 per RFC 7208)` });
+    findings.push({
+      check: "SPF lookup count",
+      status: "warn",
+      message: `SPF uses ${dnsLookupCount} DNS lookups (max 10 per RFC 7208)`,
+    });
   } else {
-    findings.push({ check: "SPF lookup count", status: "pass", message: `SPF uses ${dnsLookupCount} DNS lookup(s) (max 10)` });
+    findings.push({
+      check: "SPF lookup count",
+      status: "pass",
+      message: `SPF uses ${dnsLookupCount} DNS lookup(s) (max 10)`,
+    });
   }
 
   // Check all mechanism
@@ -72,21 +110,44 @@ async function checkSpf(domain: string): Promise<{ spf: SpfResult; findings: Che
   const hasAll = !!allMech;
   let allQualifier: string | null = null;
   if (allMech) {
-    allQualifier = allMech[0] === "+" || allMech[0] === "-" || allMech[0] === "~" || allMech[0] === "?" ? allMech[0] : "+";
+    allQualifier =
+      allMech[0] === "+" || allMech[0] === "-" || allMech[0] === "~" || allMech[0] === "?"
+        ? allMech[0]
+        : "+";
     if (allQualifier === "-") {
-      findings.push({ check: "SPF all qualifier", status: "pass", message: "SPF uses -all (hard fail)" });
+      findings.push({
+        check: "SPF all qualifier",
+        status: "pass",
+        message: "SPF uses -all (hard fail)",
+      });
     } else if (allQualifier === "~") {
-      findings.push({ check: "SPF all qualifier", status: "pass", message: "SPF uses ~all (soft fail)" });
+      findings.push({
+        check: "SPF all qualifier",
+        status: "pass",
+        message: "SPF uses ~all (soft fail)",
+      });
     } else {
-      findings.push({ check: "SPF all qualifier", status: "warn", message: `SPF uses ${allQualifier}all — should be ~all or -all` });
+      findings.push({
+        check: "SPF all qualifier",
+        status: "warn",
+        message: `SPF uses ${allQualifier}all — should be ~all or -all`,
+      });
     }
   } else {
-    findings.push({ check: "SPF all qualifier", status: "warn", message: "SPF record has no terminal 'all' mechanism" });
+    findings.push({
+      check: "SPF all qualifier",
+      status: "warn",
+      message: "SPF record has no terminal 'all' mechanism",
+    });
   }
 
   // Check for deprecated ptr
   if (mechanisms.some((m) => m.replace(/^[+\-~?]/, "").startsWith("ptr"))) {
-    findings.push({ check: "SPF ptr mechanism", status: "warn", message: "SPF uses deprecated 'ptr' mechanism (RFC 7208 §5.5)" });
+    findings.push({
+      check: "SPF ptr mechanism",
+      status: "warn",
+      message: "SPF uses deprecated 'ptr' mechanism (RFC 7208 §5.5)",
+    });
   }
 
   if (spfRecords.length === 1) {
@@ -96,14 +157,27 @@ async function checkSpf(domain: string): Promise<{ spf: SpfResult; findings: Che
   return { spf: { raw, mechanisms, dnsLookupCount, hasAll, allQualifier }, findings };
 }
 
-async function checkDmarc(domain: string): Promise<{ dmarc: DmarcResult; findings: CheckFinding[] }> {
+async function checkDmarc(
+  domain: string,
+): Promise<{ dmarc: DmarcResult; findings: CheckFinding[] }> {
   const findings: CheckFinding[] = [];
   const txtRecords = await resolveTxtRecords(`_dmarc.${domain}`);
   const dmarcRecords = txtRecords.filter((r) => r.startsWith("v=DMARC1"));
 
   if (dmarcRecords.length === 0) {
     findings.push({ check: "DMARC", status: "warn", message: "No DMARC record found" });
-    return { dmarc: { raw: null, policy: null, subdomainPolicy: null, adkim: null, aspf: null, rua: null, ruf: null }, findings };
+    return {
+      dmarc: {
+        raw: null,
+        policy: null,
+        subdomainPolicy: null,
+        adkim: null,
+        aspf: null,
+        rua: null,
+        ruf: null,
+      },
+      findings,
+    };
   }
 
   const raw = dmarcRecords[0]!;
@@ -117,15 +191,31 @@ async function checkDmarc(domain: string): Promise<{ dmarc: DmarcResult; finding
   const ruf = tags.get("ruf") ?? null;
 
   if (policy === "none") {
-    findings.push({ check: "DMARC policy", status: "warn", message: "DMARC policy is 'none' — no enforcement" });
+    findings.push({
+      check: "DMARC policy",
+      status: "warn",
+      message: "DMARC policy is 'none' — no enforcement",
+    });
   } else if (policy === "quarantine" || policy === "reject") {
-    findings.push({ check: "DMARC policy", status: "pass", message: `DMARC policy is '${policy}'` });
+    findings.push({
+      check: "DMARC policy",
+      status: "pass",
+      message: `DMARC policy is '${policy}'`,
+    });
   }
 
   if (rua) {
-    findings.push({ check: "DMARC reporting", status: "pass", message: `DMARC aggregate reporting configured: ${rua}` });
+    findings.push({
+      check: "DMARC reporting",
+      status: "pass",
+      message: `DMARC aggregate reporting configured: ${rua}`,
+    });
   } else {
-    findings.push({ check: "DMARC reporting", status: "info", message: "No DMARC aggregate reporting (rua) configured" });
+    findings.push({
+      check: "DMARC reporting",
+      status: "info",
+      message: "No DMARC aggregate reporting (rua) configured",
+    });
   }
 
   findings.push({ check: "DMARC", status: "pass", message: "DMARC record found" });
@@ -162,7 +252,11 @@ async function checkDkim(domain: string): Promise<{ dkim: DkimResult; findings: 
       details: { selectors: foundSelectors },
     });
   } else {
-    findings.push({ check: "DKIM", status: "info", message: "No DKIM selectors found among common selectors" });
+    findings.push({
+      check: "DKIM",
+      status: "info",
+      message: "No DKIM selectors found among common selectors",
+    });
   }
 
   return { dkim: { foundSelectors, checkedSelectors: [...DKIM_SELECTORS] }, findings };

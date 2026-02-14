@@ -17,8 +17,7 @@ sslTlsRouter.post("/", async (req, res) => {
     } else if (hostname.includes("/")) {
       hostname = hostname.split("/")[0]!;
     }
-  } catch {
-  }
+  } catch {}
   hostname = hostname.replace(/^www\./, "");
 
   try {

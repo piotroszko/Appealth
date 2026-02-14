@@ -10,11 +10,25 @@ async function probeNameserver(ns: string, domain: string): Promise<NsProbeResul
     const ips = await resolver.resolve4(ns);
     ip = ips[0] ?? null;
   } catch {
-    return { nameserver: ns, ip: null, responsive: false, responseTimeMs: null, soaSerial: null, error: "Could not resolve NS IP" };
+    return {
+      nameserver: ns,
+      ip: null,
+      responsive: false,
+      responseTimeMs: null,
+      soaSerial: null,
+      error: "Could not resolve NS IP",
+    };
   }
 
   if (!ip) {
-    return { nameserver: ns, ip: null, responsive: false, responseTimeMs: null, soaSerial: null, error: "No A record for NS" };
+    return {
+      nameserver: ns,
+      ip: null,
+      responsive: false,
+      responseTimeMs: null,
+      soaSerial: null,
+      error: "No A record for NS",
+    };
   }
 
   const nsResolver = new Resolver();
@@ -44,7 +58,10 @@ function getParentZone(domain: string): string | null {
   return parts.slice(1).join(".");
 }
 
-async function checkDelegation(domain: string, authoritativeNs: string[]): Promise<{ consistent: boolean | null; parentNs: string[]; findings: CheckFinding[] }> {
+async function checkDelegation(
+  domain: string,
+  authoritativeNs: string[],
+): Promise<{ consistent: boolean | null; parentNs: string[]; findings: CheckFinding[] }> {
   const findings: CheckFinding[] = [];
   const parent = getParentZone(domain);
 
@@ -84,7 +101,11 @@ async function checkDelegation(domain: string, authoritativeNs: string[]): Promi
     const consistent = authArr.join(",") === delegatedArr.join(",");
 
     if (consistent) {
-      findings.push({ check: "NS delegation", status: "pass", message: "Delegation matches authoritative NS records" });
+      findings.push({
+        check: "NS delegation",
+        status: "pass",
+        message: "Delegation matches authoritative NS records",
+      });
     } else {
       findings.push({
         check: "NS delegation",
@@ -100,11 +121,18 @@ async function checkDelegation(domain: string, authoritativeNs: string[]): Promi
   }
 }
 
-export async function checkNameserverHealth(domain: string, nsRecords: string[]): Promise<NameserverHealthResult> {
+export async function checkNameserverHealth(
+  domain: string,
+  nsRecords: string[],
+): Promise<NameserverHealthResult> {
   const findings: CheckFinding[] = [];
 
   if (nsRecords.length === 0) {
-    findings.push({ check: "Nameserver health", status: "fail", message: "No NS records to check" });
+    findings.push({
+      check: "Nameserver health",
+      status: "fail",
+      message: "No NS records to check",
+    });
     return {
       probes: [],
       soaSerialsConsistent: false,
@@ -130,7 +158,11 @@ export async function checkNameserverHealth(domain: string, nsRecords: string[])
   const unresponsive = probes.filter((p) => !p.responsive);
 
   if (responsive.length === probes.length) {
-    findings.push({ check: "NS availability", status: "pass", message: `All ${probes.length} nameserver(s) are responsive` });
+    findings.push({
+      check: "NS availability",
+      status: "pass",
+      message: `All ${probes.length} nameserver(s) are responsive`,
+    });
   } else if (responsive.length > 0) {
     findings.push({
       check: "NS availability",
@@ -138,13 +170,18 @@ export async function checkNameserverHealth(domain: string, nsRecords: string[])
       message: `${unresponsive.length} of ${probes.length} nameserver(s) unresponsive: ${unresponsive.map((p) => p.nameserver).join(", ")}`,
     });
   } else {
-    findings.push({ check: "NS availability", status: "fail", message: "No nameservers are responsive" });
+    findings.push({
+      check: "NS availability",
+      status: "fail",
+      message: "No nameservers are responsive",
+    });
   }
 
   // Check response times
   for (const probe of responsive) {
     if (probe.responseTimeMs !== null) {
-      const status = probe.responseTimeMs < 100 ? "pass" : probe.responseTimeMs < 500 ? "warn" : "fail";
+      const status =
+        probe.responseTimeMs < 100 ? "pass" : probe.responseTimeMs < 500 ? "warn" : "fail";
       findings.push({
         check: "NS response time",
         status,
@@ -160,7 +197,11 @@ export async function checkNameserverHealth(domain: string, nsRecords: string[])
 
   if (serials.length >= 2) {
     if (soaSerialsConsistent) {
-      findings.push({ check: "SOA serial consistency", status: "pass", message: `All nameservers report SOA serial ${serials[0]}` });
+      findings.push({
+        check: "SOA serial consistency",
+        status: "pass",
+        message: `All nameservers report SOA serial ${serials[0]}`,
+      });
     } else {
       findings.push({
         check: "SOA serial consistency",

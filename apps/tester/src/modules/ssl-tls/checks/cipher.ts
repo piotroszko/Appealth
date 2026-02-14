@@ -34,38 +34,78 @@ export async function checkCipher(hostname: string, port: number): Promise<Ciphe
           // Cipher strength finding
           switch (strength) {
             case "insecure":
-              findings.push({ check: "Cipher strength", status: "fail", message: `Insecure cipher negotiated: ${cipher.name}`, details: { cipher: cipher.name, bits: negotiatedCipher.bits } });
+              findings.push({
+                check: "Cipher strength",
+                status: "fail",
+                message: `Insecure cipher negotiated: ${cipher.name}`,
+                details: { cipher: cipher.name, bits: negotiatedCipher.bits },
+              });
               break;
             case "weak":
-              findings.push({ check: "Cipher strength", status: "warn", message: `Weak cipher negotiated: ${cipher.name}`, details: { cipher: cipher.name, bits: negotiatedCipher.bits } });
+              findings.push({
+                check: "Cipher strength",
+                status: "warn",
+                message: `Weak cipher negotiated: ${cipher.name}`,
+                details: { cipher: cipher.name, bits: negotiatedCipher.bits },
+              });
               break;
             case "strong":
-              findings.push({ check: "Cipher strength", status: "pass", message: `Strong cipher negotiated: ${cipher.name} (${negotiatedCipher.bits}-bit)`, details: { cipher: cipher.name, bits: negotiatedCipher.bits } });
+              findings.push({
+                check: "Cipher strength",
+                status: "pass",
+                message: `Strong cipher negotiated: ${cipher.name} (${negotiatedCipher.bits}-bit)`,
+                details: { cipher: cipher.name, bits: negotiatedCipher.bits },
+              });
               break;
             case "acceptable":
-              findings.push({ check: "Cipher strength", status: "pass", message: `Acceptable cipher negotiated: ${cipher.name} (${negotiatedCipher.bits}-bit)`, details: { cipher: cipher.name, bits: negotiatedCipher.bits } });
+              findings.push({
+                check: "Cipher strength",
+                status: "pass",
+                message: `Acceptable cipher negotiated: ${cipher.name} (${negotiatedCipher.bits}-bit)`,
+                details: { cipher: cipher.name, bits: negotiatedCipher.bits },
+              });
               break;
           }
 
           // Forward secrecy
           const cipherName = cipher.name.toUpperCase();
           if (cipherName.includes("ECDHE") || cipherName.includes("DHE")) {
-            findings.push({ check: "Forward secrecy", status: "pass", message: "Forward secrecy is supported (ECDHE/DHE key exchange)" });
+            findings.push({
+              check: "Forward secrecy",
+              status: "pass",
+              message: "Forward secrecy is supported (ECDHE/DHE key exchange)",
+            });
           } else {
-            findings.push({ check: "Forward secrecy", status: "warn", message: "No forward secrecy detected (RSA key exchange)" });
+            findings.push({
+              check: "Forward secrecy",
+              status: "warn",
+              message: "No forward secrecy detected (RSA key exchange)",
+            });
           }
 
           // AEAD mode
           if (cipherName.includes("GCM") || cipherName.includes("POLY1305")) {
-            findings.push({ check: "AEAD cipher mode", status: "pass", message: "AEAD cipher mode in use (GCM/POLY1305)" });
+            findings.push({
+              check: "AEAD cipher mode",
+              status: "pass",
+              message: "AEAD cipher mode in use (GCM/POLY1305)",
+            });
           } else if (cipherName.includes("CBC")) {
-            findings.push({ check: "AEAD cipher mode", status: "info", message: "CBC cipher mode in use (AEAD preferred)" });
+            findings.push({
+              check: "AEAD cipher mode",
+              status: "info",
+              message: "CBC cipher mode in use (AEAD preferred)",
+            });
           }
 
           socket.destroy();
           resolve({ negotiatedCipher, findings });
         } catch (err) {
-          findings.push({ check: "Cipher", status: "fail", message: `Error reading cipher: ${err instanceof Error ? err.message : "unknown"}` });
+          findings.push({
+            check: "Cipher",
+            status: "fail",
+            message: `Error reading cipher: ${err instanceof Error ? err.message : "unknown"}`,
+          });
           socket.destroy();
           resolve({ negotiatedCipher: null, findings });
         }
@@ -73,7 +113,11 @@ export async function checkCipher(hostname: string, port: number): Promise<Ciphe
     );
 
     socket.on("error", (err) => {
-      findings.push({ check: "Cipher", status: "fail", message: `TLS connection failed: ${err.message}` });
+      findings.push({
+        check: "Cipher",
+        status: "fail",
+        message: `TLS connection failed: ${err.message}`,
+      });
       resolve({ negotiatedCipher: null, findings });
     });
 

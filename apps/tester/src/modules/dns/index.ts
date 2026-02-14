@@ -17,8 +17,7 @@ dnsRouter.post("/", async (req, res) => {
     } else if (cleanDomain.includes("/")) {
       cleanDomain = cleanDomain.split("/")[0]!;
     }
-  } catch {
-  }
+  } catch {}
   cleanDomain = cleanDomain.replace(/^www\./, "");
 
   try {

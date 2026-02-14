@@ -28,9 +28,6 @@ const monitorResultBucketSchema = new Schema(
 
 monitorResultBucketSchema.index({ monitoredPageId: 1, createdAt: -1 });
 
-const MonitorResultBucket = model(
-  "MonitorResultBucket",
-  monitorResultBucketSchema,
-);
+const MonitorResultBucket = model("MonitorResultBucket", monitorResultBucketSchema);
 
 export { MonitorResultBucket };

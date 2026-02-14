@@ -43,9 +43,6 @@ const brokenLinkResultBucketSchema = new Schema(
 
 brokenLinkResultBucketSchema.index({ brokenLinksTestRequestId: 1 });
 
-const BrokenLinkResultBucket = model(
-  "BrokenLinkResultBucket",
-  brokenLinkResultBucketSchema,
-);
+const BrokenLinkResultBucket = model("BrokenLinkResultBucket", brokenLinkResultBucketSchema);
 
 export { BrokenLinkResultBucket };

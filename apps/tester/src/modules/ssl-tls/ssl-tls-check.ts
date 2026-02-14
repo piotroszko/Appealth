@@ -31,21 +31,30 @@ export async function runSslTlsCheck(hostname: string, port = 443): Promise<SslT
     checkCaaValidation(hostname, issuerOrg),
   ]);
 
-  const protocolResult = protocol.status === "fulfilled"
-    ? protocol.value
-    : { protocols: [], negotiatedProtocol: null, findings: [] };
+  const protocolResult =
+    protocol.status === "fulfilled"
+      ? protocol.value
+      : { protocols: [], negotiatedProtocol: null, findings: [] };
 
-  const cipherResult = cipher.status === "fulfilled"
-    ? cipher.value
-    : { negotiatedCipher: null, findings: [] };
+  const cipherResult =
+    cipher.status === "fulfilled" ? cipher.value : { negotiatedCipher: null, findings: [] };
 
-  const hstsResult = hsts.status === "fulfilled"
-    ? hsts.value
-    : { present: false, maxAge: null, includeSubDomains: false, preload: false, rawHeader: null, findings: [] };
+  const hstsResult =
+    hsts.status === "fulfilled"
+      ? hsts.value
+      : {
+          present: false,
+          maxAge: null,
+          includeSubDomains: false,
+          preload: false,
+          rawHeader: null,
+          findings: [],
+        };
 
-  const caaValidationResult = caaValidation.status === "fulfilled"
-    ? caaValidation.value
-    : { caaRecords: [], certificateIssuer: null, issuerMatchesCaa: null, findings: [] };
+  const caaValidationResult =
+    caaValidation.status === "fulfilled"
+      ? caaValidation.value
+      : { caaRecords: [], certificateIssuer: null, issuerMatchesCaa: null, findings: [] };
 
   // Aggregate all findings
   const allFindings = [
