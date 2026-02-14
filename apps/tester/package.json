@@ -13,6 +13,7 @@
     "@full-tester/env": "*",
     "ai": "^6.0.86",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.3",
     "playwright": "^1.58.2"
   },
   "devDependencies": {
