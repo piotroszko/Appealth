@@ -1,3 +1,5 @@
+import type { pagespeedonline_v5 } from "googleapis";
+
 export type Category = "performance" | "accessibility" | "best-practices" | "seo";
 
 export interface PageInsightsRequestBody {
@@ -10,6 +12,6 @@ export interface PageInsightsResult {
   url: string;
   timestamp: string;
   analysisUTCTimestamp: string;
-  lighthouseResult: Record<string, unknown>;
-  loadingExperience: Record<string, unknown>;
+  lighthouseResult: pagespeedonline_v5.Schema$LighthouseResultV5;
+  loadingExperience: pagespeedonline_v5.Schema$PagespeedApiLoadingExperienceV5;
 }

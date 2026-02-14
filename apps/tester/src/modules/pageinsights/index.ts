@@ -34,8 +34,8 @@ pageinsightsRouter.post("/", async (req, res) => {
       url: normalizedUrl,
       timestamp: new Date().toISOString(),
       analysisUTCTimestamp: (data.analysisUTCTimestamp as string) ?? "",
-      lighthouseResult: (data.lighthouseResult as Record<string, unknown>) ?? {},
-      loadingExperience: (data.loadingExperience as Record<string, unknown>) ?? {},
+      lighthouseResult: data.lighthouseResult ?? {},
+      loadingExperience: data.loadingExperience ?? {},
     };
 
     res.json(result);
