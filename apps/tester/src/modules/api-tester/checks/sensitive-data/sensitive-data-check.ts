@@ -9,6 +9,8 @@ import {
   detectVersionHeaders,
   analyzeResponseBody,
   analyzeErrorResponse,
+  detectPii,
+  detectSourceMapComment,
 } from "./utils.js";
 
 export class SensitiveDataCheck extends BaseCheck {
@@ -36,6 +38,22 @@ export class SensitiveDataCheck extends BaseCheck {
     if (request.responseBody) {
       for (const f of analyzeResponseBody(request.responseBody)) {
         results.push({ ...base, ...f });
+      }
+
+      // PII detection
+      for (const f of detectPii(request.responseBody)) {
+        results.push({ ...base, ...f });
+      }
+
+      // Source-map comment detection (JS/CSS resources)
+      const sourceMap = detectSourceMapComment(request.responseBody);
+      if (sourceMap) {
+        results.push({
+          ...base,
+          severity: "warning",
+          message: `Source map reference found: ${sourceMap.url}`,
+          details: `The response contains a sourceMappingURL comment pointing to "${sourceMap.url}". Source maps can expose original source code in production.`,
+        });
       }
     }
 
@@ -65,6 +83,7 @@ export class SensitiveDataCheck extends BaseCheck {
       this.probeWithWrongContentTypes(origin, request, httpClient, probeBase),
       this.probeErrorPaths(origin, httpClient, probeBase),
       this.probeWithCorruptedParams(request, httpClient, probeBase),
+      this.probeSourceMaps(origin, request, httpClient, probeBase),
     ]);
 
     return results.concat(probeResults.flat());
@@ -185,5 +204,57 @@ export class SensitiveDataCheck extends BaseCheck {
     }
 
     return [];
+  }
+
+  private async probeSourceMaps(
+    _origin: string,
+    request: CapturedRequest,
+    httpClient: HttpClient,
+    base: CheckResult["request"] extends infer R ? { checkName: string; request: R } : never,
+  ): Promise<CheckResult[]> {
+    // Only probe JS/CSS resources
+    const url = request.url;
+    if (!/\.(?:js|css)(?:\?|$)/i.test(url)) return [];
+
+    const results: CheckResult[] = [];
+
+    // If a sourceMappingURL was found in the body, try to fetch it
+    if (request.responseBody) {
+      const sourceMap = detectSourceMapComment(request.responseBody);
+      if (sourceMap) {
+        const mapUrl = sourceMap.url.startsWith("http")
+          ? sourceMap.url
+          : new URL(sourceMap.url, url).href;
+
+        const mapBody = await httpClient.tryFetch(mapUrl, { method: "GET" });
+        if (mapBody && (mapBody.includes('"mappings"') || mapBody.includes('"sources"'))) {
+          results.push({
+            ...base,
+            request: { url: mapUrl, method: "GET" },
+            severity: "error",
+            message: `Source map file is publicly accessible: ${mapUrl}`,
+            details:
+              "The .map file is downloadable and contains original source code. Remove source maps from production or restrict access.",
+          });
+        }
+        return results;
+      }
+    }
+
+    // No inline comment — try the conventional .map suffix
+    const mapUrl = url.replace(/(\?.*)?$/, ".map");
+    const mapBody = await httpClient.tryFetch(mapUrl, { method: "GET" });
+    if (mapBody && (mapBody.includes('"mappings"') || mapBody.includes('"sources"'))) {
+      results.push({
+        ...base,
+        request: { url: mapUrl, method: "GET" },
+        severity: "error",
+        message: `Source map file is publicly accessible: ${mapUrl}`,
+        details:
+          "A .map file was found at the conventional path and contains original source code. Remove source maps from production or restrict access.",
+      });
+    }
+
+    return results;
   }
 }

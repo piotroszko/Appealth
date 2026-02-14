@@ -156,3 +156,79 @@ export const ERROR_TRIGGER_PATHS = [
   "/..%252f..%252f",
   "/%c0%ae%c0%ae/",
 ];
+
+// ── PII / credential patterns ──────────────────────────────────────
+
+export interface PiiPattern {
+  label: string;
+  pattern: RegExp;
+  /** When true, matched digits are validated with Luhn before reporting. */
+  luhn?: boolean;
+}
+
+export const PII_PATTERNS: PiiPattern[] = [
+  // Email addresses
+  {
+    label: "Email address",
+    pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/,
+  },
+
+  // Credit card numbers (13-19 digits, optionally separated by spaces/dashes)
+  {
+    label: "Credit card number",
+    pattern: /\b(?:\d[ -]*?){13,19}\b/,
+    luhn: true,
+  },
+
+  // US Social Security Numbers
+  {
+    label: "US Social Security Number",
+    pattern: /\b\d{3}-\d{2}-\d{4}\b/,
+  },
+
+  // Phone numbers (US / international)
+  {
+    label: "Phone number",
+    pattern: /(?:\+\d{1,3}[\s-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}\b/,
+  },
+
+  // IPv4 addresses (excluding 0.x.x.x, 127.x.x.x, 10.x.x.x, 192.168.x.x, 172.16-31.x.x)
+  {
+    label: "IPv4 address",
+    pattern:
+      /\b(?!0\.)(?!127\.)(?!10\.)(?!192\.168\.)(?!172\.(?:1[6-9]|2\d|3[01])\.)(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\b/,
+  },
+];
+
+export const API_KEY_PATTERNS: InfoLeakPattern[] = [
+  // AWS
+  { label: "AWS Access Key", pattern: /\bAKIA[0-9A-Z]{16}\b/ },
+  { label: "AWS Secret Key", pattern: /\b[A-Za-z0-9/+=]{40}\b/ },
+
+  // Stripe
+  { label: "Stripe live secret key", pattern: /\bsk_live_[0-9a-zA-Z]{24,}\b/ },
+  { label: "Stripe live publishable key", pattern: /\bpk_live_[0-9a-zA-Z]{24,}\b/ },
+
+  // GitHub
+  { label: "GitHub personal access token", pattern: /\bghp_[0-9a-zA-Z]{36}\b/ },
+  { label: "GitHub OAuth token", pattern: /\bgho_[0-9a-zA-Z]{36}\b/ },
+  { label: "GitHub fine-grained PAT", pattern: /\bgithub_pat_[0-9a-zA-Z_]{22,}\b/ },
+
+  // Google
+  { label: "Google API key", pattern: /\bAIza[0-9A-Za-z_-]{35}\b/ },
+
+  // Slack
+  { label: "Slack bot token", pattern: /\bxoxb-[0-9]{10,}-[0-9a-zA-Z-]+\b/ },
+  { label: "Slack webhook URL", pattern: /hooks\.slack\.com\/services\/T[0-9A-Z]+\/B[0-9A-Z]+\/[0-9a-zA-Z]+/ },
+
+  // Generic long hex secrets (e.g. 32+ hex chars labelled as key/secret/token in context)
+  { label: "Generic hex secret", pattern: /(?:key|secret|token|password|credential)["']?\s*[:=]\s*["']?[0-9a-f]{32,}["']?/i },
+
+  // Private keys
+  { label: "RSA/PEM private key", pattern: /-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----/ },
+];
+
+// ── Source-map detection ───────────────────────────────────────────
+
+export const SOURCE_MAP_COMMENT_PATTERN =
+  /\/\/[#@]\s*sourceMappingURL\s*=\s*(\S+)/;
