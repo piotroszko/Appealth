@@ -7,6 +7,12 @@ const SECURITY_HEADERS = [
   { header: "x-frame-options" },
   { header: "strict-transport-security" },
   { header: "content-security-policy" },
+  { header: "referrer-policy" },
+  { header: "permissions-policy" },
+  { header: "x-permitted-cross-domain-policies" },
+  { header: "cross-origin-embedder-policy" },
+  { header: "cross-origin-opener-policy" },
+  { header: "cross-origin-resource-policy" },
 ];
 
 const DOCUMENT_TYPES = new Set(["document", "html"]);
