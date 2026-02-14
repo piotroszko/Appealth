@@ -8,6 +8,7 @@ import { dnsRouter } from "./modules/dns/index.js";
 import { sslTlsRouter } from "./modules/ssl-tls/index.js";
 import { startApiTesterCron } from "./modules/api-tester/cron.js";
 import { startBrokenLinksCron } from "./modules/broken-links/cron.js";
+import { startMonitorCron } from "./modules/monitor/cron.js";
 
 await mongoose.connect(env.DATABASE_URL);
 console.log("Connected to MongoDB");
@@ -31,4 +32,5 @@ app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
   startApiTesterCron();
   startBrokenLinksCron();
+  startMonitorCron();
 });
