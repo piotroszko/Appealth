@@ -13,6 +13,7 @@ import type { ApiTesterOptions } from "./types.js";
 export function runChecks(
   requests: CapturedRequest[],
   options: ApiTesterOptions = {},
+  mode: "basic" | "full" = "full",
 ): Promise<ApiTesterResponse> {
   return new Promise((resolve, reject) => {
     const worker = fork(WORKER_PATH, [], {
@@ -57,7 +58,7 @@ export function runChecks(
       }
     });
 
-    const message: WorkerIncomingMessage = { type: "run", requests, options };
+    const message: WorkerIncomingMessage = { type: "run", requests, options, mode };
     worker.send(message);
   });
 }

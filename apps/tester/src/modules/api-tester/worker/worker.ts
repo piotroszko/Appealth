@@ -18,7 +18,7 @@ process.on("message", async (msg: WorkerIncomingMessage) => {
 
     const httpClient = new HttpClient(options.requestDelayMs, options.fetchTimeoutMs);
     const context: CheckContext = { httpClient, options };
-    const checks = createChecks();
+    const checks = createChecks(msg.mode);
 
     for (const request of msg.requests) {
       for (const check of checks) {

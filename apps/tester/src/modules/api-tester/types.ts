@@ -41,6 +41,7 @@ export type WorkerIncomingMessage = {
   type: "run";
   requests: CapturedRequest[];
   options: ApiTesterOptions;
+  mode: "basic" | "full";
 };
 
 export type WorkerOutgoingMessage =

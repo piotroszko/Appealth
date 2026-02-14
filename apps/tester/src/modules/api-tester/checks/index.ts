@@ -18,25 +18,34 @@ import { HttpMethodTamperingCheck } from "./http-method-tampering/http-method-ta
 import { JwtCheck } from "./jwt/jwt-check.js";
 import { SstiCheck } from "./ssti/ssti-check.js";
 
-export function createChecks(): BaseCheck[] {
-  return [
-    new StatusCodesCheck(),
-    new ResponseHeadersCheck(),
-    new HttpsCheck(),
-    new AuthHeadersCheck(),
-    new CookieSecurityCheck(),
-    new SensitiveDataCheck(),
-    new SqlInjectionCheck(),
-    new XssCheck(),
-    new DomXssCheck(),
-    new CommandInjectionCheck(),
-    new SsrfCheck(),
-    new NoSqlInjectionCheck(),
-    new PredefinedUrlsCheck(),
-    new CorsCheck(),
-    new OpenRedirectCheck(),
-    new HttpMethodTamperingCheck(),
-    new JwtCheck(),
-    new SstiCheck(),
-  ];
+const BASIC_CHECKS = [
+  StatusCodesCheck,
+  ResponseHeadersCheck,
+  HttpsCheck,
+  AuthHeadersCheck,
+  CookieSecurityCheck,
+  DomXssCheck,
+  JwtCheck,
+] as const;
+
+const FULL_ONLY_CHECKS = [
+  CorsCheck,
+  HttpMethodTamperingCheck,
+  SensitiveDataCheck,
+  SqlInjectionCheck,
+  XssCheck,
+  CommandInjectionCheck,
+  SsrfCheck,
+  NoSqlInjectionCheck,
+  PredefinedUrlsCheck,
+  OpenRedirectCheck,
+  SstiCheck,
+] as const;
+
+export function createChecks(mode: "basic" | "full" = "full"): BaseCheck[] {
+  const checks: BaseCheck[] = BASIC_CHECKS.map((Check) => new Check());
+  if (mode === "full") {
+    checks.push(...FULL_ONLY_CHECKS.map((Check) => new Check()));
+  }
+  return checks;
 }

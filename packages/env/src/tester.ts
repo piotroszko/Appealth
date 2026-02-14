@@ -5,6 +5,7 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     AI_API_KEY: z.string().min(1),
+    DATABASE_URL: z.string().min(1),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

@@ -1,0 +1,84 @@
+import { CronJob } from "cron";
+import { ApiTestRequest } from "@full-tester/db/models/api-test-request.model";
+import { NetworkRequestBucket } from "@full-tester/db/models/network-request-bucket.model";
+import { ApiTestResult } from "@full-tester/db/models/api-test-result.model";
+import { runChecks } from "./run-checks.js";
+import type { CapturedRequest } from "../../types/index.js";
+
+let isProcessing = false;
+
+async function processNextRequest() {
+  if (isProcessing) return;
+  isProcessing = true;
+
+  try {
+    const request = await ApiTestRequest.findOneAndUpdate(
+      { status: "pending" },
+      { $set: { status: "running", startedAt: new Date() } },
+      { sort: { createdAt: 1 }, new: true },
+    );
+
+    if (!request) return;
+
+    const bucket = await NetworkRequestBucket.findOne({
+      apiTestRequestId: request._id,
+    });
+
+    if (!bucket || !Array.isArray(bucket.requests) || bucket.requests.length === 0) {
+      await ApiTestRequest.updateOne(
+        { _id: request._id },
+        { $set: { status: "failed", error: "No network requests found", completedAt: new Date() } },
+      );
+      return;
+    }
+
+    const capturedRequests = bucket.requests as CapturedRequest[];
+    const result = await runChecks(
+      capturedRequests,
+      { domains: [request.domain] },
+      request.type as "basic" | "full",
+    );
+
+    await ApiTestResult.create({
+      _id: crypto.randomUUID(),
+      apiTestRequestId: request._id,
+      results: result.results,
+      summary: result.summary,
+    });
+
+    await ApiTestRequest.updateOne(
+      { _id: request._id },
+      { $set: { status: "completed", completedAt: new Date() } },
+    );
+
+    console.log(`Completed test request ${request._id} (${request.type}) for ${request.domain}`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Cron processing error:", message);
+  } finally {
+    isProcessing = false;
+  }
+}
+
+async function recoverStaleRequests() {
+  const thirtyFiveMinutesAgo = new Date(Date.now() - 35 * 60 * 1000);
+
+  const result = await ApiTestRequest.updateMany(
+    { status: "running", startedAt: { $lt: thirtyFiveMinutesAgo } },
+    { $set: { status: "failed", error: "Timed out — stuck in running state", completedAt: new Date() } },
+  );
+
+  if (result.modifiedCount > 0) {
+    console.log(`Recovered ${result.modifiedCount} stale test request(s)`);
+  }
+}
+
+export function startApiTesterCron() {
+  const processingJob = new CronJob("* * * * *", processNextRequest);
+  processingJob.start();
+  console.log("API tester cron started (every 1 minute)");
+
+  const recoveryJob = new CronJob("*/10 * * * *", recoverStaleRequests);
+  recoveryJob.start();
+  console.log("Stale recovery cron started (every 10 minutes)");
+}
