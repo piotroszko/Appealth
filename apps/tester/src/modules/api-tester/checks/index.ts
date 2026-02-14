@@ -10,6 +10,7 @@ import { CommandInjectionCheck } from "./command-injection/command-injection-che
 import { SsrfCheck } from "./ssrf/ssrf-check.js";
 import { NoSqlInjectionCheck } from "./nosql-injection/nosql-injection-check.js";
 import { PredefinedUrlsCheck } from "./predefined-urls/predefined-urls-check.js";
+import { CorsCheck } from "./cors/cors-check.js";
 
 export function createChecks(): BaseCheck[] {
   return [
@@ -24,5 +25,6 @@ export function createChecks(): BaseCheck[] {
     new SsrfCheck(),
     new NoSqlInjectionCheck(),
     new PredefinedUrlsCheck(),
+    new CorsCheck(),
   ];
 }

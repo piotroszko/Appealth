@@ -2,10 +2,6 @@
 
 Remaining check types to implement in `apps/tester/src/modules/api-tester/checks/`.
 
-## Injection Attacks
-
-- [ ] **NoSQL Injection** — Inject MongoDB operators (`$gt`, `$ne`, `$regex`) into JSON body fields, detect auth bypass or data leakage
-
 ## Authentication & Authorization
 
 - [ ] **CORS Misconfiguration** — Send requests with `Origin: https://evil.com`, flag if `Access-Control-Allow-Origin` reflects arbitrary origins
