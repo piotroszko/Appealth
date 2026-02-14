@@ -4,7 +4,6 @@ Remaining check types to implement in `apps/tester/src/modules/api-tester/checks
 
 ## Injection Attacks
 
-- [ ] **Path Traversal / LFI** — Inject `../../etc/passwd` style payloads in params, check for file contents like `root:x:0:0`
 - [ ] **NoSQL Injection** — Inject MongoDB operators (`$gt`, `$ne`, `$regex`) into JSON body fields, detect auth bypass or data leakage
 
 ## Authentication & Authorization
