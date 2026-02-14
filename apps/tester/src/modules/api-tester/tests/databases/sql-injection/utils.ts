@@ -1,6 +1,5 @@
+import { throttledFetch } from "../../../fetch-wrapper.js";
 import { SQL_ERROR_PATTERNS } from "./payloads.js";
-
-const FETCH_TIMEOUT_MS = 5_000;
 
 export function parseBodyFields(
   postData: string,
@@ -47,11 +46,7 @@ export function matchSqlError(body: string): { engine: string; pattern: RegExp }
 
 export async function tryFetch(url: string, init: RequestInit): Promise<string | null> {
   try {
-    const res = await fetch(url, {
-      ...init,
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      redirect: "follow",
-    });
+    const res = await throttledFetch(url, init);
     return await res.text();
   } catch {
     return null;

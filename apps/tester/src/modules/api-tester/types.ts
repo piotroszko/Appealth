@@ -12,6 +12,8 @@ export interface CheckResult {
 
 export interface ApiTesterOptions {
   domains?: string[];
+  requestDelayMs?: number;
+  fetchTimeoutMs?: number;
 }
 
 export type CheckFn = (

@@ -1,4 +1,5 @@
 import type { CheckResult, WorkerIncomingMessage, WorkerOutgoingMessage } from "./types.js";
+import { configureFetch } from "./fetch-wrapper.js";
 import { allChecks } from "./tests/index.js";
 
 process.on("message", async (msg: WorkerIncomingMessage) => {
@@ -9,6 +10,11 @@ process.on("message", async (msg: WorkerIncomingMessage) => {
     const results: CheckResult[] = [];
 
     const options = msg.options ?? {};
+
+    configureFetch({
+      requestDelayMs: options.requestDelayMs,
+      fetchTimeoutMs: options.fetchTimeoutMs,
+    });
 
     for (const request of msg.requests) {
       for (const check of allChecks) {

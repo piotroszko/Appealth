@@ -1,4 +1,4 @@
-const FETCH_TIMEOUT_MS = 5_000;
+import { throttledFetch } from "../../fetch-wrapper.js";
 
 export function parseBodyFields(
   postData: string,
@@ -56,11 +56,7 @@ export function matchXssReflection(responseBody: string, payload: string): boole
 
 export async function tryFetch(url: string, init: RequestInit): Promise<string | null> {
   try {
-    const res = await fetch(url, {
-      ...init,
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      redirect: "follow",
-    });
+    const res = await throttledFetch(url, init);
     return await res.text();
   } catch {
     return null;

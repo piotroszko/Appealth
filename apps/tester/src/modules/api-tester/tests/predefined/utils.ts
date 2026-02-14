@@ -1,7 +1,6 @@
+import { throttledFetch } from "../../fetch-wrapper.js";
 import type { CheckResult } from "../../types.js";
 import type { ProbePath, ProbeResult } from "./types.js";
-
-const FETCH_TIMEOUT_MS = 5_000;
 
 const SOFT_404_PATTERNS = [
   /page\s+not\s+found/i,
@@ -14,10 +13,8 @@ const SOFT_404_PATTERNS = [
 
 export async function tryProbe(url: string): Promise<ProbeResult | null> {
   try {
-    const res = await fetch(url, {
+    const res = await throttledFetch(url, {
       method: "GET",
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      redirect: "follow",
       headers: { "User-Agent": "Mozilla/5.0 (compatible; SecurityScanner/1.0)" },
     });
 
