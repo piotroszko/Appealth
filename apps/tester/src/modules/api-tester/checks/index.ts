@@ -8,6 +8,7 @@ import { SqlInjectionCheck } from "./sql-injection/sql-injection-check.js";
 import { XssCheck } from "./xss/xss-check.js";
 import { CommandInjectionCheck } from "./command-injection/command-injection-check.js";
 import { SsrfCheck } from "./ssrf/ssrf-check.js";
+import { NoSqlInjectionCheck } from "./nosql-injection/nosql-injection-check.js";
 import { PredefinedUrlsCheck } from "./predefined-urls/predefined-urls-check.js";
 
 export function createChecks(): BaseCheck[] {
@@ -21,6 +22,7 @@ export function createChecks(): BaseCheck[] {
     new XssCheck(),
     new CommandInjectionCheck(),
     new SsrfCheck(),
+    new NoSqlInjectionCheck(),
     new PredefinedUrlsCheck(),
   ];
 }
