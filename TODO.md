@@ -4,8 +4,6 @@ Remaining check types to implement in `apps/tester/src/modules/api-tester/checks
 
 ## Injection Attacks
 
-- [ ] **Command Injection** — Inject shell metacharacters (`;ls`, `|cat /etc/passwd`) into params/body/headers, detect OS output in response
-- [ ] **SSRF (Server-Side Request Forgery)** — Inject internal URLs (`http://127.0.0.1`, `http://169.254.169.254`) into params, detect cloud metadata or internal responses
 - [ ] **Path Traversal / LFI** — Inject `../../etc/passwd` style payloads in params, check for file contents like `root:x:0:0`
 - [ ] **NoSQL Injection** — Inject MongoDB operators (`$gt`, `$ne`, `$regex`) into JSON body fields, detect auth bypass or data leakage
 

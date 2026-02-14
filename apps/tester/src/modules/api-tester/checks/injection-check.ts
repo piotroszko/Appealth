@@ -9,6 +9,8 @@ export interface InjectionConfig {
   payloads: string[];
   match(body: string, payload: string): { suffix: string; explanation: string } | null;
   vulnLabel: string;
+  replaceValue?: boolean;
+  skipUrlPath?: boolean;
 }
 
 export abstract class InjectionCheck extends BaseCheck {
@@ -31,7 +33,7 @@ export abstract class InjectionCheck extends BaseCheck {
     const bodyFields = postData ? parseBodyFields(postData, contentType) : null;
 
     const results = await Promise.all([
-      this.testUrlPath(request, base, httpClient),
+      this.config.skipUrlPath ? [] : this.testUrlPath(request, base, httpClient),
       hasQueryParams ? this.testQueryParams(request, base, httpClient) : [],
       bodyFields ? this.testBodyFields(request, bodyFields, contentType, base, httpClient) : [],
       this.testHeaders(request, base, httpClient),
@@ -51,7 +53,10 @@ export abstract class InjectionCheck extends BaseCheck {
     for (const [param, originalValue] of Object.entries(request.queryParams)) {
       for (const payload of this.config.payloads) {
         const injectedUrl = new URL(parsed.toString());
-        injectedUrl.searchParams.set(param, originalValue + payload);
+        injectedUrl.searchParams.set(
+          param,
+          this.config.replaceValue ? payload : originalValue + payload,
+        );
 
         const body = await httpClient.tryFetch(injectedUrl.toString(), {
           method: request.method,
@@ -91,7 +96,7 @@ export abstract class InjectionCheck extends BaseCheck {
       for (const payload of this.config.payloads) {
         const injectedHeaders = {
           ...request.requestHeaders,
-          [header]: originalValue + payload,
+          [header]: this.config.replaceValue ? payload : originalValue + payload,
         };
 
         const body = await httpClient.tryFetch(request.url, {
@@ -164,7 +169,7 @@ export abstract class InjectionCheck extends BaseCheck {
 
     for (const [field, originalValue] of Object.entries(fields)) {
       for (const payload of this.config.payloads) {
-        const injectedValue = originalValue + payload;
+        const injectedValue = this.config.replaceValue ? payload : originalValue + payload;
         let injectedBody: string;
         let bodyContentType: string;
 
