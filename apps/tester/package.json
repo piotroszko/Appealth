@@ -20,6 +20,7 @@
     "@full-tester/config": "*",
     "@playwright/test": "^1.58.2",
     "@types/express": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.13.14",
     "tsx": "^4.19.4",
     "typescript": "^5"
