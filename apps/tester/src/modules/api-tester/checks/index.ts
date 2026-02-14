@@ -6,6 +6,7 @@ import { AuthHeadersCheck } from "./static/auth-headers-check.js";
 import { SensitiveDataCheck } from "./sensitive-data/sensitive-data-check.js";
 import { SqlInjectionCheck } from "./sql-injection/sql-injection-check.js";
 import { XssCheck } from "./xss/xss-check.js";
+import { DomXssCheck } from "./xss/dom-xss-check.js";
 import { CommandInjectionCheck } from "./command-injection/command-injection-check.js";
 import { SsrfCheck } from "./ssrf/ssrf-check.js";
 import { NoSqlInjectionCheck } from "./nosql-injection/nosql-injection-check.js";
@@ -24,6 +25,7 @@ export function createChecks(): BaseCheck[] {
     new SensitiveDataCheck(),
     new SqlInjectionCheck(),
     new XssCheck(),
+    new DomXssCheck(),
     new CommandInjectionCheck(),
     new SsrfCheck(),
     new NoSqlInjectionCheck(),

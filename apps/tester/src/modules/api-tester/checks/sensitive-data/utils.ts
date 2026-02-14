@@ -154,10 +154,7 @@ function redact(value: string): string {
 }
 
 export function detectPii(body: string): Finding[] {
-  return [
-    ...scanPiiPatterns(body, PII_PATTERNS),
-    ...scanPatterns(body, API_KEY_PATTERNS, "error"),
-  ];
+  return [...scanPiiPatterns(body, PII_PATTERNS), ...scanPatterns(body, API_KEY_PATTERNS, "error")];
 }
 
 // ── Source-map detection ───────────────────────────────────────────

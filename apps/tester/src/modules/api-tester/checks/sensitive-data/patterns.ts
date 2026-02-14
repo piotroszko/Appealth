@@ -219,10 +219,16 @@ export const API_KEY_PATTERNS: InfoLeakPattern[] = [
 
   // Slack
   { label: "Slack bot token", pattern: /\bxoxb-[0-9]{10,}-[0-9a-zA-Z-]+\b/ },
-  { label: "Slack webhook URL", pattern: /hooks\.slack\.com\/services\/T[0-9A-Z]+\/B[0-9A-Z]+\/[0-9a-zA-Z]+/ },
+  {
+    label: "Slack webhook URL",
+    pattern: /hooks\.slack\.com\/services\/T[0-9A-Z]+\/B[0-9A-Z]+\/[0-9a-zA-Z]+/,
+  },
 
   // Generic long hex secrets (e.g. 32+ hex chars labelled as key/secret/token in context)
-  { label: "Generic hex secret", pattern: /(?:key|secret|token|password|credential)["']?\s*[:=]\s*["']?[0-9a-f]{32,}["']?/i },
+  {
+    label: "Generic hex secret",
+    pattern: /(?:key|secret|token|password|credential)["']?\s*[:=]\s*["']?[0-9a-f]{32,}["']?/i,
+  },
 
   // Private keys
   { label: "RSA/PEM private key", pattern: /-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----/ },
@@ -230,5 +236,4 @@ export const API_KEY_PATTERNS: InfoLeakPattern[] = [
 
 // ── Source-map detection ───────────────────────────────────────────
 
-export const SOURCE_MAP_COMMENT_PATTERN =
-  /\/\/[#@]\s*sourceMappingURL\s*=\s*(\S+)/;
+export const SOURCE_MAP_COMMENT_PATTERN = /\/\/[#@]\s*sourceMappingURL\s*=\s*(\S+)/;
