@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
 
-import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "../index.css";
-import { Footer } from "@/components/landing/footer";
-import Header from "@/components/header";
 import Providers from "@/components/providers";
-import logo from "./logo.svg";
-import Head from "next/head";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,11 +38,7 @@ export default function RootLayout({
           <meta name="apple-mobile-web-app-title" content="Appealth" />
           <link rel="manifest" href="/site.webmanifest" />
 
-          <div className="grid min-h-svh grid-rows-[auto_1fr_auto]">
-            <Header logo={<Image src={logo} alt="Appealth logo" className="size-6" />} />
-            {children}
-            <Footer />
-          </div>
+          <TooltipProvider>{children}</TooltipProvider>
         </Providers>
       </body>
     </html>

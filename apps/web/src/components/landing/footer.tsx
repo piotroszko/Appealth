@@ -6,7 +6,7 @@ const footerLinks = {
     { label: "Features", href: "#features" },
     { label: "How It Works", href: "#how-it-works" },
     { label: "Why Appealth?", href: "#why-us" },
-    { label: "Profile", href: "/profile" },
+    { label: "Dashboard", href: "/app" },
   ],
   Resources: [{ label: "Status", href: "#" }],
   Company: [

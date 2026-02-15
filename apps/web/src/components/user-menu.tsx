@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, User } from "lucide-react";
+import { Home, LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -62,6 +62,10 @@ export default function UserMenu() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => router.push("/app")}>
+            <Home className="size-4" />
+            Dashboard
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/profile")}>
             <User className="size-4" />
             Profile

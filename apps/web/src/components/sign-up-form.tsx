@@ -11,14 +11,7 @@ import { authClient } from "@/lib/auth-client";
 import { Form } from "./form";
 import Loader from "./loader";
 import { buttonVariants } from "./ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
@@ -80,7 +73,7 @@ export default function SignUpForm() {
                   },
                   {
                     onSuccess: () => {
-                      router.push("/profile");
+                      router.push("/app");
                       toast.success("Sign up successful");
                     },
                     onError: (error) => {

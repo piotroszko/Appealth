@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import logo from "../logo.svg";
+import logo from "../../logo.svg";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
