@@ -21,7 +21,7 @@ const sites = [
     grade: "B+",
   },
   {
-    url: "your-competitors-website.com",
+    url: "your-competitor-website.com",
     scores: { Security: 58, Performance: 45, SEO: 29 },
     grade: "D",
   },
@@ -123,7 +123,7 @@ function HealthReportCard() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.25 }}
-            className="ml-auto flex items-center gap-1.5 rounded-md border border-primary/20 bg-primary/5 px-2 py-0.5 text-sm font-medium text-primary"
+            className="ml-auto flex items-center gap-1.5 rounded-md border bg-muted px-2 py-0.5 text-sm font-medium text-foreground"
           >
             <Globe className="size-3" />
             {site.url}
@@ -235,11 +235,11 @@ export function HeroSection() {
             </motion.p>
 
             <motion.div variants={fadeInUp} className="flex flex-wrap gap-3">
-              <Link href="/login" className={buttonVariants({ size: "lg" })}>
+              <Link href="/login" className={buttonVariants({ size: "lg", className: "text-sm font-semibold px-5 h-10" })}>
                 Start Free Diagnosis
                 <ArrowRight className="size-4" />
               </Link>
-              <a href="#features" className={buttonVariants({ variant: "outline", size: "lg" })}>
+              <a href="#features" className={buttonVariants({ variant: "outline", size: "lg", className: "text-sm font-semibold px-5 h-10" })}>
                 See All Tests
               </a>
             </motion.div>

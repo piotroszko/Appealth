@@ -30,7 +30,7 @@ export function CtaSection() {
             className={buttonVariants({
               size: "lg",
               variant: "secondary",
-              className: "text-sm font-semibold",
+              className: "text-sm font-semibold px-5 h-10",
             })}
           >
             Start Free Diagnosis
