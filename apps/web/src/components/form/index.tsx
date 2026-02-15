@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import type { FormValidateOrFn } from "@tanstack/react-form";
 import { useForm } from "@tanstack/react-form";
+import type { RefinementCtx } from "zod";
 
 import { Button } from "@/components/ui/button";
 
@@ -14,6 +15,7 @@ import { buildDefaultValues, buildValidator } from "./utils";
 interface FormProps<T extends InputsRecord> {
   inputs: T;
   onSubmit: (values: InferFormValues<T>) => void | Promise<void>;
+  refine?: (values: InferFormValues<T>, ctx: RefinementCtx) => void;
   submitLabel?: string;
   className?: string;
   children?: ReactNode;
@@ -22,17 +24,23 @@ interface FormProps<T extends InputsRecord> {
 export function Form<T extends InputsRecord>({
   inputs,
   onSubmit,
+  refine,
   submitLabel = "Submit",
   className,
   children,
 }: FormProps<T>) {
+  const baseSchema = buildValidator(inputs);
+  const schema = refine
+    ? baseSchema.superRefine((val, ctx) => refine(val as InferFormValues<T>, ctx))
+    : baseSchema;
+
   const form = useForm({
     defaultValues: buildDefaultValues(inputs),
     onSubmit: async ({ value }) => {
       await onSubmit(value as InferFormValues<T>);
     },
     validators: {
-      onSubmit: buildValidator(inputs) as FormValidateOrFn<InferFormValues<T>>,
+      onSubmit: schema as FormValidateOrFn<InferFormValues<T>>,
     },
   });
 

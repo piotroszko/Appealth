@@ -31,6 +31,16 @@ import { queryClient, trpc } from "@/utils/trpc";
 
 import { type Domain, getColumns } from "./columns";
 
+function isPartOfDomain(website: string, domain: string): boolean {
+  const withProtocol = website.match(/^https?:\/\//) ? website : `https://${website}`;
+  try {
+    const hostname = new URL(withProtocol).hostname;
+    return hostname === domain || hostname.endsWith(`.${domain}`);
+  } catch {
+    return false;
+  }
+}
+
 function getDomainInputs(domain?: Domain) {
   return {
     name: {
@@ -139,6 +149,16 @@ export default function DomainsPage() {
             <Form
               key={String(sheetOpen)}
               inputs={getDomainInputs()}
+              refine={(values, ctx) => {
+                const invalid = values.websites.filter((w) => !isPartOfDomain(w, values.domainName));
+                if (invalid.length > 0) {
+                  ctx.addIssue({
+                    code: "custom",
+                    message: `Not part of ${values.domainName}: ${invalid.join(", ")}`,
+                    path: ["websites"],
+                  });
+                }
+              }}
               onSubmit={async (values) => { await createMutation.mutateAsync(values); }}
               submitLabel="Create Domain"
               className="space-y-4"
@@ -157,6 +177,16 @@ export default function DomainsPage() {
               <Form
                 key={domainToEdit._id as string}
                 inputs={getDomainInputs(domainToEdit)}
+                refine={(values, ctx) => {
+                  const invalid = values.websites.filter((w) => !isPartOfDomain(w, values.domainName));
+                  if (invalid.length > 0) {
+                    ctx.addIssue({
+                      code: "custom",
+                      message: `Not part of "${values.domainName}" domain: ${invalid.join(", ")}`,
+                      path: ["websites"],
+                    });
+                  }
+                }}
                 onSubmit={async (values) => {
                   await updateMutation.mutateAsync({ id: domainToEdit._id as string, ...values });
                 }}
