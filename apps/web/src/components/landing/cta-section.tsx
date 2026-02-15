@@ -18,10 +18,16 @@ export function CtaSection() {
         whileInView="visible"
         viewport={{ once: true, margin: "-50px" }}
       >
-        <motion.h2 variants={fadeInUp} className="text-3xl font-bold tracking-tight dark:text-white md:text-4xl">
+        <motion.h2
+          variants={fadeInUp}
+          className="text-3xl font-bold tracking-tight dark:text-white md:text-4xl"
+        >
           Ready for Your Website&apos;s First Checkup?
         </motion.h2>
-        <motion.p variants={fadeInUp} className="mx-auto mt-4 max-w-xl text-primary-foreground/80 dark:text-white/80">
+        <motion.p
+          variants={fadeInUp}
+          className="mx-auto mt-4 max-w-xl text-primary-foreground/80 dark:text-white/80"
+        >
           Start diagnosing your website for free. No credit card required.
         </motion.p>
         <motion.div variants={fadeInUp} className="mt-8">

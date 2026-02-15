@@ -138,8 +138,13 @@ function HealthReportCard() {
             const Icon = metricIcons[label];
             const colors = scoreColor(score);
             return (
-              <div key={label} className="flex items-center gap-3 rounded-lg border bg-background p-3">
-                <div className={`flex size-8 items-center justify-center rounded-md ${colors.iconBg}`}>
+              <div
+                key={label}
+                className="flex items-center gap-3 rounded-lg border bg-background p-3"
+              >
+                <div
+                  className={`flex size-8 items-center justify-center rounded-md ${colors.iconBg}`}
+                >
                   <Icon className={`size-4 ${colors.icon}`} />
                 </div>
                 <div className="flex-1">
@@ -172,7 +177,9 @@ function HealthReportCard() {
       </div>
 
       {/* Grade */}
-      <div className={`mt-4 flex items-center justify-between rounded-lg border ${gradeStyles.border} ${gradeStyles.bg} p-3`}>
+      <div
+        className={`mt-4 flex items-center justify-between rounded-lg border ${gradeStyles.border} ${gradeStyles.bg} p-3`}
+      >
         <span className="text-xs font-medium">Overall Health</span>
         <AnimatePresence mode="wait">
           <motion.span
@@ -217,8 +224,7 @@ export function HeroSection() {
           >
             <motion.div variants={fadeInUp}>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
-                <Activity className="size-3" />
-                9 Diagnostic Modules
+                <Activity className="size-3" />9 Diagnostic Modules
               </span>
             </motion.div>
 
@@ -235,11 +241,24 @@ export function HeroSection() {
             </motion.p>
 
             <motion.div variants={fadeInUp} className="flex flex-wrap gap-3">
-              <Link href="/auth/register" className={buttonVariants({ size: "lg", className: "text-sm font-semibold px-5 h-10" })}>
+              <Link
+                href="/auth/register"
+                className={buttonVariants({
+                  size: "lg",
+                  className: "text-sm font-semibold px-5 h-10",
+                })}
+              >
                 Start Free Diagnosis
                 <ArrowRight className="size-4" />
               </Link>
-              <a href="#features" className={buttonVariants({ variant: "outline", size: "lg", className: "text-sm font-semibold px-5 h-10" })}>
+              <a
+                href="#features"
+                className={buttonVariants({
+                  variant: "outline",
+                  size: "lg",
+                  className: "text-sm font-semibold px-5 h-10",
+                })}
+              >
                 See All Tests
               </a>
             </motion.div>
