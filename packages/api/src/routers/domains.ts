@@ -1,30 +1,32 @@
 import crypto from "node:crypto";
 
-import { Website } from "@full-tester/db/models/website.model";
+import { Domain } from "@full-tester/db/models/domain.model";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
 
-export const websitesRouter = router({
+export const domainsRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
-    return Website.find({ userId }).sort({ createdAt: -1 }).lean();
+    return Domain.find({ userId }).sort({ createdAt: -1 }).lean();
   }),
 
   create: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1),
-        url: z.string().url(),
+        websites: z.array(z.string()).default([]),
+        allowedExternalDomains: z.array(z.string()).default([]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
-      return Website.create({
+      return Domain.create({
         _id: crypto.randomUUID(),
         userId,
         name: input.name,
-        url: input.url,
+        websites: input.websites,
+        allowedExternalDomains: input.allowedExternalDomains,
       });
     }),
 
@@ -33,14 +35,19 @@ export const websitesRouter = router({
       z.object({
         id: z.string(),
         name: z.string().min(1),
-        url: z.string().url(),
+        websites: z.array(z.string()).default([]),
+        allowedExternalDomains: z.array(z.string()).default([]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
-      return Website.findOneAndUpdate(
+      return Domain.findOneAndUpdate(
         { _id: input.id, userId },
-        { name: input.name, url: input.url },
+        {
+          name: input.name,
+          websites: input.websites,
+          allowedExternalDomains: input.allowedExternalDomains,
+        },
         { new: true },
       ).lean();
     }),
@@ -49,7 +56,7 @@ export const websitesRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
-      await Website.deleteOne({ _id: input.id, userId });
+      await Domain.deleteOne({ _id: input.id, userId });
       return { success: true };
     }),
 });

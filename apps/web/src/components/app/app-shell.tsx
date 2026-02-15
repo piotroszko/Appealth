@@ -59,9 +59,9 @@ export function AppShell({
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton isActive={pathname.startsWith("/app/websites")} className="cursor-pointer" render={<Link href="/app/websites" />}>
+                  <SidebarMenuButton isActive={pathname.startsWith("/app/domains")} className="cursor-pointer" render={<Link href="/app/domains" />}>
                     <Globe className="size-4" />
-                    Websites
+                    Domains
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>

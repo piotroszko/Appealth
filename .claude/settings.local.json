@@ -8,7 +8,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:github.com)",
       "Bash(npm run check:*)",
-      "Bash(npm run check-types:*)"
+      "Bash(npm run check-types:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }
