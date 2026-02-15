@@ -2,7 +2,18 @@ import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 
-const domainSchema = new Schema(
+export interface IDomain {
+  _id: string;
+  userId: string;
+  name: string;
+  domain: string;
+  websites: string[];
+  allowedExternalDomains: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const domainSchema = new Schema<IDomain>(
   {
     _id: { type: String },
     userId: { type: String, ref: "User", required: true },
@@ -16,6 +27,6 @@ const domainSchema = new Schema(
 
 domainSchema.index({ userId: 1 });
 
-const Domain = model("Domain", domainSchema);
+const Domain = mongoose.models.Domain || model<IDomain>("Domain", domainSchema);
 
 export { Domain };

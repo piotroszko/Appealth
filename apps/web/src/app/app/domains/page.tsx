@@ -9,6 +9,16 @@ import { z } from "zod";
 
 import { AppPage } from "@/components/app/app-page";
 import { Form } from "@/components/form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import {
@@ -60,6 +70,7 @@ const addDomainInputs = {
 
 export default function DomainsPage() {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [domainToDelete, setDomainToDelete] = useState<Domain | null>(null);
   const { data = [] } = useQuery(trpc.domains.list.queryOptions());
 
   const createMutation = useMutation(
@@ -89,7 +100,7 @@ export default function DomainsPage() {
       console.log("Edit domain", domain);
     },
     onDelete: (domain: Domain) => {
-      deleteMutation.mutate({ id: domain._id });
+      setDomainToDelete(domain);
     },
   });
 
@@ -103,7 +114,7 @@ export default function DomainsPage() {
         </Button>
       </div>
       <div className="mt-4">
-        <DataTable columns={columns} data={data as Domain[]} />
+        <DataTable columns={columns} data={data} />
       </div>
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -122,6 +133,36 @@ export default function DomainsPage() {
           </div>
         </SheetContent>
       </Sheet>
+
+      <AlertDialog
+        open={!!domainToDelete}
+        onOpenChange={(open) => { if (!open) setDomainToDelete(null); }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete domain</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete{" "}
+              <strong>{domainToDelete?.name}</strong>? This action cannot be
+              undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (domainToDelete) {
+                  deleteMutation.mutate({ id: domainToDelete._id as string });
+                  setDomainToDelete(null);
+                }
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AppPage>
   );
 }

@@ -1,20 +1,14 @@
 "use client";
 
+import type { inferRouterOutputs } from "@trpc/server";
 import type { ColumnDef } from "@tanstack/react-table";
 
+import type { AppRouter } from "@full-tester/api/routers/index";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-export type Domain = {
-  _id: string;
-  name: string;
-  domain: string;
-  websites: string[];
-  allowedExternalDomains: string[];
-  createdAt: string;
-  updatedAt: string;
-};
+export type Domain = inferRouterOutputs<AppRouter>["domains"]["list"][number];
 
 type ColumnActions = {
   onView: (domain: Domain) => void;
