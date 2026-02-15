@@ -17,8 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "full-tester",
-  description: "full-tester",
+  title: "Appealth - Your Website's Health Clinic",
+  description:
+    "Comprehensive website diagnostics — security audits, performance tests, SEO checks, and uptime monitoring. All in one place.",
 };
 
 export default function RootLayout({
@@ -30,7 +31,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          <div className="grid grid-rows-[auto_1fr] h-svh">
+          <div className="grid min-h-svh grid-rows-[auto_1fr_auto]">
             <Header />
             {children}
           </div>
