@@ -26,6 +26,7 @@ const addDomainInputs = {
     type: "text" as const,
     label: "Name",
     placeholder: "e.g. My Project",
+    description: "A descriptive name for easier identification.",
     validator: z.string().min(1, "Name is required"),
     defaultValue: "",
   },
@@ -33,6 +34,7 @@ const addDomainInputs = {
     type: "text" as const,
     label: "Domain",
     placeholder: "e.g. example.com",
+    description: "The domain itself, without protocol (http/https).",
     validator: z.string().min(1, "Domain is required"),
     defaultValue: "",
   },
@@ -40,6 +42,8 @@ const addDomainInputs = {
     type: "urls" as const,
     label: "Websites",
     placeholder: "e.g. example.com",
+    description:
+      "Websites hosted on this domain. Include all sites on the main domain and subdomains that should be included in checks.",
     validator: z.array(z.string()).default([]),
     defaultValue: [] as string[],
   },
@@ -47,6 +51,8 @@ const addDomainInputs = {
     type: "urls" as const,
     label: "Allowed External Domains",
     placeholder: "e.g. cdn.example.com",
+    description:
+      "External domains you are authorized to run security checks against. Any external links not listed here will be skipped.",
     validator: z.array(z.string()).default([]),
     defaultValue: [] as string[],
   },

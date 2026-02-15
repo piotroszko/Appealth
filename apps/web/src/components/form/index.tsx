@@ -45,30 +45,32 @@ export function Form<T extends InputsRecord>({
       }}
       className={className}
     >
-      {Object.entries(inputs).map(([name, config]) => {
-        const FieldComponent = FIELD_COMPONENTS[config.type];
-        return (
-          <div key={name}>
-            <form.Field name={name}>
-              {(field) => (
-                <FieldComponent
-                  field={field}
-                  label={config.label}
-                  placeholder={config.placeholder}
-                  options={config.options}
-                  description={config.description}
-                />
-              )}
-            </form.Field>
-          </div>
-        );
-      })}
+      <div className="space-y-6">
+        {Object.entries(inputs).map(([name, config]) => {
+          const FieldComponent = FIELD_COMPONENTS[config.type];
+          return (
+            <div key={name}>
+              <form.Field name={name}>
+                {(field) => (
+                  <FieldComponent
+                    field={field}
+                    label={config.label}
+                    placeholder={config.placeholder}
+                    options={config.options}
+                    description={config.description}
+                  />
+                )}
+              </form.Field>
+            </div>
+          );
+        })}
+      </div>
 
       <form.Subscribe>
         {(state) => (
           <Button
             type="submit"
-            className="w-full"
+            className="mt-8 w-full"
             disabled={!state.canSubmit || state.isSubmitting}
           >
             {state.isSubmitting ? "Submitting..." : submitLabel}

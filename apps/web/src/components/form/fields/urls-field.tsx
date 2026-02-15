@@ -27,7 +27,7 @@ function isValidUrl(value: string): boolean {
   }
 }
 
-export function UrlsField({ field, label, placeholder }: FieldComponentProps) {
+export function UrlsField({ field, label, placeholder, description }: FieldComponentProps) {
   const [inputValue, setInputValue] = useState("");
   const [inputError, setInputError] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -96,6 +96,9 @@ export function UrlsField({ field, label, placeholder }: FieldComponentProps) {
   return (
     <div className="space-y-2">
       <Label htmlFor={field.name}>{label}</Label>
+      {description && (
+        <p className="text-muted-foreground text-xs">{description}</p>
+      )}
 
       {urls.length > 0 && (
         <Table>
