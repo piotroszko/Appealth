@@ -8,6 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -48,31 +49,33 @@ export default function UserMenu() {
         {initials}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 bg-card">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-medium">{session.user.name}</span>
-            <span className="text-xs text-muted-foreground">{session.user.email}</span>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push("/profile")}>
-          <User className="size-4" />
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          variant="destructive"
-          onClick={() => {
-            authClient.signOut({
-              fetchOptions: {
-                onSuccess: () => router.push("/"),
-              },
-            });
-          }}
-        >
-          <LogOut className="size-4" />
-          Sign Out
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="px-3 py-3 font-normal">
+            <div className="flex flex-col gap-1">
+              <span className="text-sm font-semibold text-foreground">{session.user.name}</span>
+              <span className="text-sm text-muted-foreground">{session.user.email}</span>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => router.push("/profile")}>
+            <User className="size-4" />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => {
+              authClient.signOut({
+                fetchOptions: {
+                  onSuccess: () => router.push("/"),
+                },
+              });
+            }}
+          >
+            <LogOut className="size-4" />
+            Sign Out
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

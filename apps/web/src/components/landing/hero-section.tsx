@@ -11,24 +11,24 @@ import { fadeInRight, fadeInUp, staggerContainer } from "./motion";
 
 const sites = [
   {
-    url: "acme-store.com",
-    scores: { Security: 94, Performance: 87, SEO: 96 },
-    grade: "A+",
+    url: "yourbeautifulapp.com",
+    scores: { Security: 94, Performance: 97, SEO: 96 },
+    grade: "S",
   },
   {
-    url: "blogify.io",
-    scores: { Security: 72, Performance: 91, SEO: 84 },
+    url: "example.com",
+    scores: { Security: 72, Performance: 61, SEO: 74 },
     grade: "B+",
   },
   {
-    url: "dash-analytics.dev",
-    scores: { Security: 88, Performance: 65, SEO: 79 },
-    grade: "B",
+    url: "your-competitors-website.com",
+    scores: { Security: 58, Performance: 45, SEO: 29 },
+    grade: "D",
   },
   {
-    url: "quickpay.app",
-    scores: { Security: 98, Performance: 93, SEO: 90 },
-    grade: "A+",
+    url: "randomapp.app",
+    scores: { Security: 74, Performance: 43, SEO: 60 },
+    grade: "C+",
   },
 ];
 
@@ -38,9 +38,53 @@ const metricIcons = {
   SEO: CheckCircle,
 } as const;
 
+function scoreColor(score: number) {
+  if (score >= 80)
+    return {
+      text: "text-emerald-600 dark:text-emerald-400",
+      bar: "bg-emerald-500",
+      icon: "text-emerald-600 dark:text-emerald-400",
+      iconBg: "bg-emerald-500/10",
+    };
+  if (score >= 60)
+    return {
+      text: "text-amber-600 dark:text-amber-400",
+      bar: "bg-amber-500",
+      icon: "text-amber-600 dark:text-amber-400",
+      iconBg: "bg-amber-500/10",
+    };
+  return {
+    text: "text-red-600 dark:text-red-400",
+    bar: "bg-red-500",
+    icon: "text-red-600 dark:text-red-400",
+    iconBg: "bg-red-500/10",
+  };
+}
+
+function gradeStyle(grade: string) {
+  if (grade === "S" || grade.startsWith("A"))
+    return {
+      text: "text-emerald-600 dark:text-emerald-400",
+      border: "border-emerald-500/20",
+      bg: "bg-emerald-500/5",
+    };
+  if (grade.startsWith("B"))
+    return {
+      text: "text-amber-600 dark:text-amber-400",
+      border: "border-amber-500/20",
+      bg: "bg-amber-500/5",
+    };
+  return {
+    text: "text-red-600 dark:text-red-400",
+    border: "border-red-500/20",
+    bg: "bg-red-500/5",
+  };
+}
+
 function HealthReportCard() {
   const [index, setIndex] = useState(0);
   const site = sites[index];
+  const gradeStyles = gradeStyle(site.grade);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -50,7 +94,24 @@ function HealthReportCard() {
   }, []);
 
   return (
-    <div className="rounded-xl border bg-card p-6 shadow-lg">
+    <div className="relative rounded-xl border bg-card p-6 shadow-lg">
+      {/* Floating accent card — only for first site */}
+      <AnimatePresence>
+        {index === 0 && (
+          <motion.div
+            className="absolute -top-6 -right-3 z-10 rounded-lg border bg-card p-2 shadow-md"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex items-center gap-2">
+              <div className="size-2 animate-pulse rounded-full bg-primary" />
+              <span className="text-xs font-medium">Monitoring Active</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Header with URL */}
       <div className="mb-4 flex items-center gap-2">
         <div className="size-3 rounded-full bg-primary" />
@@ -75,10 +136,11 @@ function HealthReportCard() {
         {(Object.entries(site.scores) as [keyof typeof metricIcons, number][]).map(
           ([label, score]) => {
             const Icon = metricIcons[label];
+            const colors = scoreColor(score);
             return (
               <div key={label} className="flex items-center gap-3 rounded-lg border bg-background p-3">
-                <div className="flex size-8 items-center justify-center rounded-md bg-primary/10">
-                  <Icon className="size-4 text-primary" />
+                <div className={`flex size-8 items-center justify-center rounded-md ${colors.iconBg}`}>
+                  <Icon className={`size-4 ${colors.icon}`} />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
@@ -89,7 +151,7 @@ function HealthReportCard() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="text-xs font-bold text-primary"
+                        className={`text-xs font-bold ${colors.text}`}
                       >
                         {score}/100
                       </motion.span>
@@ -97,7 +159,7 @@ function HealthReportCard() {
                   </div>
                   <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
                     <motion.div
-                      className="h-full rounded-full bg-primary"
+                      className={`h-full rounded-full ${colors.bar}`}
                       animate={{ width: `${score}%` }}
                       transition={{ duration: 0.6, ease: "easeOut" }}
                     />
@@ -110,7 +172,7 @@ function HealthReportCard() {
       </div>
 
       {/* Grade */}
-      <div className="mt-4 flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3">
+      <div className={`mt-4 flex items-center justify-between rounded-lg border ${gradeStyles.border} ${gradeStyles.bg} p-3`}>
         <span className="text-xs font-medium">Overall Health</span>
         <AnimatePresence mode="wait">
           <motion.span
@@ -119,7 +181,7 @@ function HealthReportCard() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.25 }}
-            className="text-lg font-bold text-primary"
+            className={`text-lg font-bold ${gradeStyles.text}`}
           >
             {site.grade}
           </motion.span>
@@ -191,19 +253,6 @@ export function HeroSection() {
             className="relative hidden lg:block"
           >
             <HealthReportCard />
-
-            {/* Floating accent card */}
-            <motion.div
-              className="absolute -top-6 -right-3 rounded-lg border bg-card p-3 shadow-md"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.2, duration: 0.4 }}
-            >
-              <div className="flex items-center gap-2">
-                <div className="size-2 animate-pulse rounded-full bg-primary" />
-                <span className="text-xs font-medium">Monitoring Active</span>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </div>
