@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { google } from "googleapis";
-import { env } from "@full-tester/env/tester";
+import { env } from "@full-tester/env/scanner";
 import type { PageInsightsRequestBody, PageInsightsResult, Category } from "./types.js";
 
 const DEFAULT_CATEGORIES: Category[] = ["performance", "accessibility", "best-practices", "seo"];

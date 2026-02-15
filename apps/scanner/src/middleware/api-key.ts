@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { env } from "@full-tester/env/tester";
+import { env } from "@full-tester/env/scanner";
 
 export function apiKeyAuth(req: Request, res: Response, next: NextFunction) {
   const apiKey = req.headers["x-api-key"];

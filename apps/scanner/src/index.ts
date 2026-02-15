@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import express from "express";
-import { env } from "@full-tester/env/tester";
+import { env } from "@full-tester/env/scanner";
 import { apiKeyAuth } from "./middleware/api-key.js";
 import { crawlRouter } from "./modules/crawl/index.js";
 import { pageinsightsRouter } from "./modules/pageinsights/index.js";

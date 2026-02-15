@@ -8,7 +8,7 @@ A comprehensive website testing, security analysis, and monitoring platform buil
 | ------------------ | ---------------------------------------------- |
 | Frontend           | Next.js 16, React 19, TailwindCSS 4, shadcn/ui |
 | Backend (web)      | tRPC v11, Next.js API routes                   |
-| Backend (tester)   | Express 5, Playwright                          |
+| Backend (scanner)  | Express 5, Playwright                          |
 | Database           | MongoDB, Mongoose 8                            |
 | Auth               | Better-Auth, Polar payments                    |
 | AI                 | AI SDK (Groq)                                  |
@@ -39,24 +39,24 @@ The project uses typed, Zod-validated environment variables via `@t3-oss/env-cor
 | ------------------------- | ---------------------------- | ------------------------------------ |
 | `@full-tester/env/server` | `packages/env/src/server.ts` | Web app backend (tRPC, API routes)   |
 | `@full-tester/env/web`    | `packages/env/src/web.ts`    | Web app client (Next.js public vars) |
-| `@full-tester/env/tester` | `packages/env/src/tester.ts` | Tester Express API                   |
+| `@full-tester/env/scanner` | `packages/env/src/scanner.ts` | Scanner Express API                  |
 
 Create `.env` files in:
 
 - `apps/web/.env` — MongoDB URI, auth secrets, Polar keys
-- `apps/tester/.env` — MongoDB URI, Google API key, Groq API key
+- `apps/scanner/.env` — MongoDB URI, Google API key, Groq API key
 
 ### Running Development
 
 ```bash
-# Start all apps (web + tester) via Turborepo
+# Start all apps (web + scanner) via Turborepo
 npm run dev
 
 # Start only the web app
 npm run dev:web
 ```
 
-The web app runs on **port 3002** (bare `next dev`). The tester API runs on **port 3002**.
+The web app runs on **port 3002** (bare `next dev`). The scanner API runs on **port 3002**.
 
 ## Project Structure
 
@@ -75,7 +75,7 @@ full-tester/
 │   │   │   └── utils/          # tRPC client setup
 │   │   └── next.config.ts
 │   │
-│   └── tester/                 # Express API — crawling & testing engine
+│   └── scanner/                # Express API — crawling & testing engine
 │       └── src/
 │           ├── index.ts        # Server entry, route mounting, cron jobs
 │           └── modules/        # Feature modules (see below)
@@ -84,7 +84,7 @@ full-tester/
 │   ├── api/                    # tRPC router layer (public + protected procedures)
 │   ├── auth/                   # Better-Auth config, MongoDB adapter, Polar payments
 │   ├── db/                     # Mongoose models and MongoDB connection
-│   ├── env/                    # Zod-validated env vars (server, web, tester)
+│   ├── env/                    # Zod-validated env vars (server, web, scanner)
 │   ├── config/                 # Shared tsconfig.base.json
 │
 ├── turbo.json                  # Turborepo task definitions
@@ -93,9 +93,9 @@ full-tester/
 └── package.json                # Root workspace
 ```
 
-## Tester Modules
+## Scanner Modules
 
-The tester API is organized into feature modules under `apps/tester/src/modules/`. Each module follows a consistent structure: `index.ts` (Express router), `types.ts`, core logic, and optional `checks/` or `utils/` subdirectories.
+The scanner API is organized into feature modules under `apps/scanner/src/modules/`. Each module follows a consistent structure: `index.ts` (Express router), `types.ts`, core logic, and optional `checks/` or `utils/` subdirectories.
 
 ### Domain Crawling
 
@@ -177,7 +177,7 @@ Mongoose models and MongoDB connection. Models include:
 
 ### `@full-tester/env`
 
-Typed environment variables using `@t3-oss/env-core` with Zod validation. Three separate configs for web server, web client, and tester app.
+Typed environment variables using `@t3-oss/env-core` with Zod validation. Three separate configs for web server, web client, and scanner app.
 
 ### `@full-tester/config`
 
@@ -202,7 +202,7 @@ npm run check            # Oxlint + Oxfmt (lint and format)
 npm run dev:bare         # next dev --port 3002
 npm run build            # next build
 
-# Tester (from apps/tester/)
+# Scanner (from apps/scanner/)
 npm run dev              # tsx watch src/index.ts
 npm run build            # tsc
 ```
@@ -210,8 +210,8 @@ npm run build            # tsc
 ## Key Patterns
 
 - **tRPC end-to-end types**: The web app imports `AppRouter` from `@full-tester/api` and creates a typed client. API routes live in `packages/api/src/routers/`.
-- **Tester module structure**: Feature modules in `apps/tester/src/modules/<name>/` with `index.ts` (router), `types.ts`, core logic file, and `checks/` or `utils/` subdirectories.
-- **Environment validation**: All env vars are validated at runtime with Zod. Import from `@full-tester/env/server`, `@full-tester/env/web`, or `@full-tester/env/tester`.
+- **Scanner module structure**: Feature modules in `apps/scanner/src/modules/<name>/` with `index.ts` (router), `types.ts`, core logic file, and `checks/` or `utils/` subdirectories.
+- **Environment validation**: All env vars are validated at runtime with Zod. Import from `@full-tester/env/server`, `@full-tester/env/web`, or `@full-tester/env/scanner`.
 - **ESM throughout**: All packages use `"type": "module"`. Use `.js` extensions in relative imports within the tester app.
 - **Bucketed storage**: Test results use a bucketing strategy in MongoDB for efficient querying over time-series data.
-- **Cron scheduling**: The tester app runs three background cron jobs for API testing, broken link detection, and uptime monitoring.
+- **Cron scheduling**: The scanner app runs three background cron jobs for API testing, broken link detection, and uptime monitoring.
