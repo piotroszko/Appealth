@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { AppPage } from "@/components/app/app-page";
 import { DeleteProjectDialog } from "@/components/project/delete-project-dialog";
 import type { Project } from "@/components/project/project-columns";
+import { ProjectSections } from "@/components/project/sections/project-sections";
 import { Button } from "@/components/ui/button";
 import { queryClient, trpc } from "@/utils/trpc";
 
@@ -78,15 +79,8 @@ export default function ViewProjectPage({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
-      <div className="mt-6 max-w-2xl space-y-4">
-        <div>
-          <h2 className="text-sm font-medium text-muted-foreground">Domain</h2>
-          <p className="mt-1">{project.domainName}</p>
-        </div>
-        <div>
-          <h2 className="text-sm font-medium text-muted-foreground">URL</h2>
-          <p className="mt-1">{project.url || "—"}</p>
-        </div>
+      <div className="mt-6">
+        <ProjectSections project={project as Project} />
       </div>
 
       <DeleteProjectDialog

@@ -8,7 +8,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { AppPage } from "@/components/app/app-page";
+import type { Project } from "@/components/project/project-columns";
 import { ProjectForm } from "@/components/project/project-form";
+import { ProjectSections } from "@/components/project/sections/project-sections";
 import { Button } from "@/components/ui/button";
 import { queryClient, trpc } from "@/utils/trpc";
 
@@ -77,6 +79,9 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             </Button>
           }
         />
+      </div>
+      <div className="mt-8">
+        <ProjectSections project={project as Project} />
       </div>
     </AppPage>
   );

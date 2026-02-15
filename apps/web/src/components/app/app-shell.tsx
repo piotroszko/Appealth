@@ -6,6 +6,9 @@ import { FolderKanban, Home, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
+import { PROJECT_SECTIONS } from "@/components/project/sections";
+import { useActiveSection } from "@/hooks/use-active-section";
+
 import { authClient } from "@/lib/auth-client";
 
 import {
@@ -19,6 +22,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
 
@@ -33,6 +39,9 @@ export function AppShell({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const isProjectDetailPage =
+    pathname.startsWith("/app/projects/view/") || pathname.startsWith("/app/projects/edit/");
+  const activeSectionId = useActiveSection(isProjectDetailPage);
 
   return (
     <SidebarProvider>
@@ -63,6 +72,24 @@ export function AppShell({
                     <FolderKanban className="size-4" />
                     Projects
                   </SidebarMenuButton>
+                  {isProjectDetailPage && (
+                    <SidebarMenuSub>
+                      {PROJECT_SECTIONS.map((section) => (
+                        <SidebarMenuSubItem key={section.id}>
+                          <SidebarMenuSubButton
+                            isActive={activeSectionId === section.id}
+                            className="cursor-pointer"
+                            onClick={() => {
+                              document.getElementById(section.id)?.scrollIntoView({ behavior: "smooth" });
+                            }}
+                          >
+                            <section.icon className="size-4" />
+                            {section.label}
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  )}
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
