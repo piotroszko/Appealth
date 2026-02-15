@@ -28,9 +28,14 @@ export default function UserMenu() {
 
   if (!session) {
     return (
-      <Link href="/login" className={buttonVariants({ size: "sm" })}>
-        Sign In
-      </Link>
+      <div className="flex items-center gap-2">
+        <Link href="/auth/login" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+          Sign In
+        </Link>
+        <Link href="/auth/register" className={buttonVariants({ size: "sm" })}>
+          Sign Up
+        </Link>
+      </div>
     );
   }
 

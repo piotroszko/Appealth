@@ -26,7 +26,7 @@ export function CtaSection() {
         </motion.p>
         <motion.div variants={fadeInUp} className="mt-8">
           <Link
-            href="/login"
+            href="/auth/register"
             className={buttonVariants({
               size: "lg",
               variant: "secondary",

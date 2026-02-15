@@ -12,7 +12,7 @@ export default async function ProfilePage() {
   });
 
   if (!session?.user) {
-    redirect("/login");
+    redirect("/auth/login");
   }
 
   const { data: customerState } = await authClient.customer.state({

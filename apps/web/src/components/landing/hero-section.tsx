@@ -235,7 +235,7 @@ export function HeroSection() {
             </motion.p>
 
             <motion.div variants={fadeInUp} className="flex flex-wrap gap-3">
-              <Link href="/login" className={buttonVariants({ size: "lg", className: "text-sm font-semibold px-5 h-10" })}>
+              <Link href="/auth/register" className={buttonVariants({ size: "lg", className: "text-sm font-semibold px-5 h-10" })}>
                 Start Free Diagnosis
                 <ArrowRight className="size-4" />
               </Link>
