@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 
-import { Globe, Home, LogOut } from "lucide-react";
+import { FolderKanban, Home, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -59,9 +59,9 @@ export function AppShell({
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuButton isActive={pathname.startsWith("/app/domains")} className="cursor-pointer" render={<Link href="/app/domains" />}>
-                    <Globe className="size-4" />
-                    Domains
+                  <SidebarMenuButton isActive={pathname.startsWith("/app/projects")} className="cursor-pointer" render={<Link href="/app/projects" />}>
+                    <FolderKanban className="size-4" />
+                    Projects
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>

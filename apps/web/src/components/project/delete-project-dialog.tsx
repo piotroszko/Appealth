@@ -11,26 +11,26 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import type { Domain } from "./domain-columns";
+import type { Project } from "./project-columns";
 
-interface DeleteDomainDialogProps {
-  domain: Domain | null;
+interface DeleteProjectDialogProps {
+  project: Project | null;
   onOpenChange: (open: boolean) => void;
-  onConfirm: (domain: Domain) => void;
+  onConfirm: (project: Project) => void;
 }
 
-export function DeleteDomainDialog({ domain, onOpenChange, onConfirm }: DeleteDomainDialogProps) {
+export function DeleteProjectDialog({ project, onOpenChange, onConfirm }: DeleteProjectDialogProps) {
   return (
     <AlertDialog
-      open={!!domain}
+      open={!!project}
       onOpenChange={onOpenChange}
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete domain</AlertDialogTitle>
+          <AlertDialogTitle>Delete project</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to delete{" "}
-            <strong>{domain?.name}</strong>? This action cannot be
+            <strong>{project?.name}</strong>? This action cannot be
             undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -39,7 +39,7 @@ export function DeleteDomainDialog({ domain, onOpenChange, onConfirm }: DeleteDo
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={() => {
-              if (domain) onConfirm(domain);
+              if (project) onConfirm(project);
             }}
           >
             Delete

@@ -1,34 +1,38 @@
 import crypto from "node:crypto";
 
-import { Domain } from "@full-tester/db/models/domain.model";
+import { Project } from "@full-tester/db/models/project.model";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
 
-export const domainsRouter = router({
+export const projectsRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
-    return Domain.find({ userId }).sort({ createdAt: -1 }).lean();
+    return Project.find({ userId }).sort({ createdAt: -1 }).lean();
   }),
+
+  get: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return Project.findOne({ _id: input.id, userId: ctx.session.user.id }).lean();
+    }),
 
   create: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1),
         domainName: z.string().min(1),
-        websites: z.array(z.string()).default([]),
-        allowedExternalDomains: z.array(z.string()).default([]),
+        url: z.string().default(""),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
-      return Domain.create({
+      return Project.create({
         _id: crypto.randomUUID(),
         userId,
         name: input.name,
         domainName: input.domainName,
-        websites: input.websites,
-        allowedExternalDomains: input.allowedExternalDomains,
+        url: input.url,
       });
     }),
 
@@ -38,19 +42,17 @@ export const domainsRouter = router({
         id: z.string(),
         name: z.string().min(1),
         domainName: z.string().min(1),
-        websites: z.array(z.string()).default([]),
-        allowedExternalDomains: z.array(z.string()).default([]),
+        url: z.string().default(""),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
-      return Domain.findOneAndUpdate(
+      return Project.findOneAndUpdate(
         { _id: input.id, userId },
         {
           name: input.name,
           domainName: input.domainName,
-          websites: input.websites,
-          allowedExternalDomains: input.allowedExternalDomains,
+          url: input.url,
         },
         { new: true },
       ).lean();
@@ -60,7 +62,7 @@ export const domainsRouter = router({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
-      await Domain.deleteOne({ _id: input.id, userId });
+      await Project.deleteOne({ _id: input.id, userId });
       return { success: true };
     }),
 });

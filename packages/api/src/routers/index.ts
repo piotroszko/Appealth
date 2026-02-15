@@ -1,5 +1,5 @@
 import { protectedProcedure, publicProcedure, router } from "../index";
-import { domainsRouter } from "./domains";
+import { projectsRouter } from "./projects";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -11,6 +11,6 @@ export const appRouter = router({
       user: ctx.session.user,
     };
   }),
-  domains: domainsRouter,
+  projects: projectsRouter,
 });
 export type AppRouter = typeof appRouter;
