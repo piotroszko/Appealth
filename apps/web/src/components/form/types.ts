@@ -1,7 +1,22 @@
 import type { AnyFieldApi } from "@tanstack/react-form";
 import type { z } from "zod";
 
-export type FieldType = "text" | "password";
+export type FieldType =
+  | "text"
+  | "password"
+  | "textarea"
+  | "number"
+  | "email"
+  | "url"
+  | "select"
+  | "checkbox"
+  | "switch"
+  | "urls";
+
+export interface SelectOption {
+  label: string;
+  value: string;
+}
 
 export interface InputConfig<TValue = unknown> {
   type: FieldType;
@@ -9,6 +24,8 @@ export interface InputConfig<TValue = unknown> {
   placeholder?: string;
   validator: z.ZodType<TValue>;
   defaultValue: TValue;
+  options?: SelectOption[];
+  description?: string;
 }
 
 export type InputsRecord = Record<string, InputConfig>;
@@ -22,4 +39,6 @@ export interface FieldComponentProps {
   label: string;
   placeholder?: string;
   className?: string;
+  options?: SelectOption[];
+  description?: string;
 }

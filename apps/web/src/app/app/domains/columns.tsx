@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 export type Domain = {
   _id: string;
   name: string;
+  domain: string;
   websites: string[];
   allowedExternalDomains: string[];
   createdAt: string;
@@ -26,6 +27,10 @@ export function getColumns(actions: ColumnActions): ColumnDef<Domain>[] {
     {
       accessorKey: "name",
       header: "Name",
+    },
+    {
+      accessorKey: "domain",
+      header: "Domain",
     },
     {
       accessorKey: "websites",

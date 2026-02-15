@@ -55,6 +55,8 @@ export function Form<T extends InputsRecord>({
                   field={field}
                   label={config.label}
                   placeholder={config.placeholder}
+                  options={config.options}
+                  description={config.description}
                 />
               )}
             </form.Field>
