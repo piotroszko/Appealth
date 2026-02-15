@@ -7,6 +7,7 @@ import "../index.css";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
 import logo from "./logo.svg";
+import Head from "next/head";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
+
+          <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+          <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+          <link rel="shortcut icon" href="/favicon.ico" />
+          <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+          <meta name="apple-mobile-web-app-title" content="Appealth" />
+          <link rel="manifest" href="/site.webmanifest" />
+
           <div className="grid min-h-svh grid-rows-[auto_1fr_auto]">
             <Header logo={<Image src={logo} alt="Appealth logo" className="size-6" />} />
             {children}
