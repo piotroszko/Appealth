@@ -3,10 +3,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   typedRoutes: true,
-  reactCompiler: true,
-  experimental: {
-    workerThreads: true,
-  },
+  reactCompiler: true
 };
 
 export default nextConfig;
