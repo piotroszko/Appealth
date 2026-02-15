@@ -2,9 +2,9 @@
 
 import type { ReactNode } from "react";
 
-import { Home, LogOut } from "lucide-react";
+import { Globe, Home, LogOut } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { authClient } from "@/lib/auth-client";
 
@@ -32,6 +32,7 @@ export function AppShell({
   children: ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <SidebarProvider>
@@ -52,9 +53,15 @@ export function AppShell({
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton isActive className="cursor-pointer" render={<Link href="/app" />}>
+                  <SidebarMenuButton isActive={pathname === "/app"} className="cursor-pointer" render={<Link href="/app" />}>
                     <Home className="size-4" />
                     Dashboard
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton isActive={pathname.startsWith("/app/websites")} className="cursor-pointer" render={<Link href="/app/websites" />}>
+                    <Globe className="size-4" />
+                    Websites
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
