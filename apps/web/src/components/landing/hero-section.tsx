@@ -35,7 +35,7 @@ export function HeroSection() {
             <motion.div variants={fadeInUp}>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
                 <Activity className="size-3" />
-                10+ Diagnostic Modules
+                9 Diagnostic Modules
               </span>
             </motion.div>
 
@@ -119,7 +119,7 @@ export function HeroSection() {
 
             {/* Floating accent card */}
             <motion.div
-              className="absolute -bottom-4 -left-4 rounded-lg border bg-card p-3 shadow-md"
+              className="absolute -top-6 -right-3 rounded-lg border bg-card p-3 shadow-md"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 1.2, duration: 0.4 }}

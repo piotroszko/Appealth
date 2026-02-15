@@ -4,6 +4,7 @@ import { Footer } from "@/components/landing/footer";
 import { HeroSection } from "@/components/landing/hero-section";
 import { HowItWorksSection } from "@/components/landing/how-it-works-section";
 import { TrustSection } from "@/components/landing/trust-section";
+import { WhyUsSection } from "@/components/landing/why-us-section";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <TrustSection />
       <FeaturesSection />
       <HowItWorksSection />
+      <WhyUsSection />
       <CtaSection />
       <Footer />
     </main>

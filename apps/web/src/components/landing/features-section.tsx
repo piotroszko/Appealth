@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import {
   Activity,
-  BarChart3,
   FileCode,
   Gauge,
   Globe,
@@ -66,12 +65,6 @@ const features = [
     metaphor: "Heart Rate Monitor",
     name: "Uptime Monitoring",
     description: "Continuous monitoring with instant alerts when your site goes down.",
-  },
-  {
-    icon: BarChart3,
-    metaphor: "Blood Work",
-    name: "Load Coverage",
-    description: "Simulate traffic spikes to test how your infrastructure handles load.",
   },
   {
     icon: Zap,

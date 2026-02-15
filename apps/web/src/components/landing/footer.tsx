@@ -5,13 +5,10 @@ const footerLinks = {
   Product: [
     { label: "Features", href: "#features" },
     { label: "How It Works", href: "#how-it-works" },
+    { label: "Why Appealth?", href: "#why-us" },
     { label: "Dashboard", href: "/dashboard" },
   ],
-  Resources: [
-    { label: "Documentation", href: "#" },
-    { label: "API Reference", href: "#" },
-    { label: "Status", href: "#" },
-  ],
+  Resources: [{ label: "Status", href: "#" }],
   Company: [
     { label: "About", href: "#" },
     { label: "Privacy", href: "#" },

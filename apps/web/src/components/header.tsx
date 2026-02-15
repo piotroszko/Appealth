@@ -31,6 +31,12 @@ export default function Header() {
             >
               How It Works
             </a>
+            <a
+              href="#why-us"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Why Appealth?
+            </a>
             <Link
               href="/dashboard"
               className="text-muted-foreground transition-colors hover:text-foreground"

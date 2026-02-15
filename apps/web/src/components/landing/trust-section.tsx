@@ -6,7 +6,7 @@ import { Activity, FileCode, Shield, TestTubes } from "lucide-react";
 import { fadeInUp, staggerContainer } from "./motion";
 
 const stats = [
-  { icon: TestTubes, label: "10+ Diagnostic Modules" },
+  { icon: TestTubes, label: "9 Diagnostic Modules" },
   { icon: Shield, label: "20+ Security Checks" },
   { icon: Activity, label: "Real-time Monitoring" },
   { icon: FileCode, label: "W3C Validation" },
