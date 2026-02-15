@@ -13,9 +13,7 @@
   "dependencies": {
     "@full-tester/db": "*",
     "@full-tester/env": "*",
-    "@polar-sh/better-auth": "^1.6.4",
-    "@polar-sh/sdk": "^0.42.2",
-    "better-auth": "^1.4.18",
+"better-auth": "^1.4.18",
     "dotenv": "^17.2.2",
     "zod": "^4.1.13"
   },

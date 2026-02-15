@@ -10,7 +10,7 @@ A comprehensive website testing, security analysis, and monitoring platform buil
 | Backend (web)      | tRPC v11, Next.js API routes                   |
 | Backend (scanner)  | Express 5, Playwright                          |
 | Database           | MongoDB, Mongoose 8                            |
-| Auth               | Better-Auth, Polar payments                    |
+| Auth               | Better-Auth                                    |
 | AI                 | AI SDK (Groq)                                  |
 | Monorepo           | npm workspaces, Turborepo                      |
 | Linting/Formatting | Oxlint, Oxfmt                                  |
@@ -43,7 +43,7 @@ The project uses typed, Zod-validated environment variables via `@t3-oss/env-cor
 
 Create `.env` files in:
 
-- `apps/web/.env` — MongoDB URI, auth secrets, Polar keys
+- `apps/web/.env` — MongoDB URI, auth secrets
 - `apps/scanner/.env` — MongoDB URI, Google API key, Groq API key
 
 ### Running Development
@@ -68,7 +68,7 @@ full-tester/
 │   │   │   ├── app/            # App router pages
 │   │   │   │   ├── dashboard/  # Main dashboard
 │   │   │   │   ├── login/      # Authentication
-│   │   │   │   ├── success/    # Payment success
+│   │   │   │   ├── profile/    # User profile
 │   │   │   │   └── api/        # tRPC + auth API routes
 │   │   │   ├── components/     # React components + shadcn/ui
 │   │   │   ├── lib/            # Auth client, utilities
@@ -82,7 +82,7 @@ full-tester/
 │
 ├── packages/
 │   ├── api/                    # tRPC router layer (public + protected procedures)
-│   ├── auth/                   # Better-Auth config, MongoDB adapter, Polar payments
+│   ├── auth/                   # Better-Auth config, MongoDB adapter
 │   ├── db/                     # Mongoose models and MongoDB connection
 │   ├── env/                    # Zod-validated env vars (server, web, scanner)
 │   ├── config/                 # Shared tsconfig.base.json
@@ -163,7 +163,7 @@ tRPC router layer providing `publicProcedure` and `protectedProcedure` (session-
 
 ### `@full-tester/auth`
 
-Better-Auth configuration with MongoDB adapter and Polar payment plugin for subscription management.
+Better-Auth configuration with MongoDB adapter.
 
 ### `@full-tester/db`
 
