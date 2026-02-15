@@ -1,19 +1,19 @@
 "use client";
 
-import { HeartPulse } from "lucide-react";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { ModeToggle } from "./mode-toggle";
 import UserMenu from "./user-menu";
 
-export default function Header() {
+export default function Header({ logo }: { logo: ReactNode }) {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
         {/* Brand */}
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
-            <HeartPulse className="size-5 text-primary" />
+            {logo}
             <span className="text-lg font-bold tracking-tight">Appealth</span>
           </Link>
 

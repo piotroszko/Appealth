@@ -1,11 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ClipboardList, FileCheck, Stethoscope } from "lucide-react";
+import { BadgeCheck, ClipboardList, FileCheck, Stethoscope } from "lucide-react";
 
 import { fadeInUp, staggerContainer } from "./motion";
 
 const steps = [
+  {
+    icon: BadgeCheck,
+    title: "Verify Ownership",
+    description: "Quickly confirm you own the website with a simple DNS or file check.",
+  },
   {
     icon: ClipboardList,
     title: "Book Your Appointment",
@@ -36,12 +41,12 @@ export function HowItWorksSection() {
         >
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">How It Works</h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            Three simple steps to a healthier website.
+            Four simple steps to a healthier website.
           </p>
         </motion.div>
 
         <motion.div
-          className="relative grid gap-12 md:grid-cols-3 md:gap-8"
+          className="relative grid gap-12 md:grid-cols-4 md:gap-8"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"

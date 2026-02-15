@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 
+import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "../index.css";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
+import logo from "./logo.svg";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +34,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <div className="grid min-h-svh grid-rows-[auto_1fr_auto]">
-            <Header />
+            <Header logo={<Image src={logo} alt="Appealth logo" className="size-6" />} />
             {children}
           </div>
         </Providers>
