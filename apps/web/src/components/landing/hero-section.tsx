@@ -1,12 +1,133 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Activity, ArrowRight, CheckCircle, Shield } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Activity, ArrowRight, CheckCircle, Globe, Shield } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
 
 import { fadeInRight, fadeInUp, staggerContainer } from "./motion";
+
+const sites = [
+  {
+    url: "acme-store.com",
+    scores: { Security: 94, Performance: 87, SEO: 96 },
+    grade: "A+",
+  },
+  {
+    url: "blogify.io",
+    scores: { Security: 72, Performance: 91, SEO: 84 },
+    grade: "B+",
+  },
+  {
+    url: "dash-analytics.dev",
+    scores: { Security: 88, Performance: 65, SEO: 79 },
+    grade: "B",
+  },
+  {
+    url: "quickpay.app",
+    scores: { Security: 98, Performance: 93, SEO: 90 },
+    grade: "A+",
+  },
+];
+
+const metricIcons = {
+  Security: Shield,
+  Performance: Activity,
+  SEO: CheckCircle,
+} as const;
+
+function HealthReportCard() {
+  const [index, setIndex] = useState(0);
+  const site = sites[index];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % sites.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="rounded-xl border bg-card p-6 shadow-lg">
+      {/* Header with URL */}
+      <div className="mb-4 flex items-center gap-2">
+        <div className="size-3 rounded-full bg-primary" />
+        <span className="text-sm font-medium">Health Report</span>
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={site.url}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.25 }}
+            className="ml-auto flex items-center gap-1.5 rounded-md border border-primary/20 bg-primary/5 px-2 py-0.5 text-sm font-medium text-primary"
+          >
+            <Globe className="size-3" />
+            {site.url}
+          </motion.span>
+        </AnimatePresence>
+      </div>
+
+      {/* Metrics */}
+      <div className="grid gap-3">
+        {(Object.entries(site.scores) as [keyof typeof metricIcons, number][]).map(
+          ([label, score]) => {
+            const Icon = metricIcons[label];
+            return (
+              <div key={label} className="flex items-center gap-3 rounded-lg border bg-background p-3">
+                <div className="flex size-8 items-center justify-center rounded-md bg-primary/10">
+                  <Icon className="size-4 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium">{label}</span>
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={`${site.url}-${label}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="text-xs font-bold text-primary"
+                      >
+                        {score}/100
+                      </motion.span>
+                    </AnimatePresence>
+                  </div>
+                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                    <motion.div
+                      className="h-full rounded-full bg-primary"
+                      animate={{ width: `${score}%` }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          },
+        )}
+      </div>
+
+      {/* Grade */}
+      <div className="mt-4 flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3">
+        <span className="text-xs font-medium">Overall Health</span>
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={`grade-${site.url}`}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.25 }}
+            className="text-lg font-bold text-primary"
+          >
+            {site.grade}
+          </motion.span>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
 
 export function HeroSection() {
   return (
@@ -69,53 +190,7 @@ export function HeroSection() {
             animate="visible"
             className="relative hidden lg:block"
           >
-            <div className="rounded-xl border bg-card p-6 shadow-lg">
-              <div className="mb-4 flex items-center gap-2">
-                <div className="size-3 rounded-full bg-primary" />
-                <span className="text-sm font-medium">Health Report</span>
-                <span className="ml-auto text-xs text-muted-foreground">example.com</span>
-              </div>
-
-              <div className="grid gap-3">
-                {[
-                  { label: "Security", score: 94, icon: Shield },
-                  { label: "Performance", score: 87, icon: Activity },
-                  { label: "SEO", score: 96, icon: CheckCircle },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className="flex items-center gap-3 rounded-lg border bg-background p-3"
-                  >
-                    <div className="flex size-8 items-center justify-center rounded-md bg-primary/10">
-                      <item.icon className="size-4 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium">{item.label}</span>
-                        <span className="text-xs font-bold text-primary">{item.score}/100</span>
-                      </div>
-                      <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                        <motion.div
-                          className="h-full rounded-full bg-primary"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${item.score}%` }}
-                          transition={{
-                            duration: 1,
-                            delay: 0.8,
-                            ease: "easeOut",
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-4 flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 p-3">
-                <span className="text-xs font-medium">Overall Health</span>
-                <span className="text-lg font-bold text-primary">A+</span>
-              </div>
-            </div>
+            <HealthReportCard />
 
             {/* Floating accent card */}
             <motion.div

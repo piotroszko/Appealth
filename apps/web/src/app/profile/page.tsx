@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 
 import { authClient } from "@/lib/auth-client";
 
-import Dashboard from "./dashboard";
+import Profile from "./profile";
 
-export default async function DashboardPage() {
+export default async function ProfilePage() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -23,9 +23,9 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <h1>Profile</h1>
       <p>Welcome {session.user.name}</p>
-      <Dashboard session={session} customerState={customerState} />
+      <Profile session={session} customerState={customerState} />
     </div>
   );
 }

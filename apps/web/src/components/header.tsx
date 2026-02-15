@@ -38,10 +38,10 @@ export default function Header({ logo }: { logo: ReactNode }) {
               Why Appealth?
             </a>
             <Link
-              href="/dashboard"
+              href="/profile"
               className="text-muted-foreground transition-colors hover:text-foreground"
             >
-              Dashboard
+              Profile
             </Link>
           </nav>
         </div>

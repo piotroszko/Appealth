@@ -10,7 +10,7 @@ const reasons = [
     icon: ShieldCheck,
     title: "Security-First by Design",
     description:
-      "Most website testing tools bolt on a single SSL check and call it security. We built Appealth around 20+ dedicated security checks — from OWASP Top 10 scanning and header analysis to API vulnerability testing and real-time threat detection.",
+      "Most website testing tools bolt on a single SSL check and call it security. We built Appealth around 20+ dedicated security checks — from OWASP Top 10 scanning and header analysis to API vulnerability testing.",
   },
   {
     icon: Search,

@@ -2,31 +2,31 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import * as React from "react";
-
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useEffect, useState } from "react";
 
 export function ModeToggle() {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return <div className="size-8" />;
+
+  const isDark = theme === "dark";
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="outline" size="icon" />}>
-        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-        <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-        <span className="sr-only">Toggle theme</span>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <button
+      type="button"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="relative flex h-8 w-14 cursor-pointer items-center rounded-full border bg-muted p-0.5 transition-colors hover:bg-accent"
+      aria-label="Toggle theme"
+    >
+      <Sun className="absolute left-1.5 size-3.5 text-muted-foreground" />
+      <Moon className="absolute right-1.5 size-3.5 text-muted-foreground" />
+      <span
+        className="size-6 rounded-full bg-primary shadow-sm transition-transform duration-200"
+        style={{ transform: isDark ? "translateX(24px)" : "translateX(0)" }}
+      />
+    </button>
   );
 }

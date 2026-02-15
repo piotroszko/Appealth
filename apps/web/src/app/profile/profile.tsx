@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 
-export default function Dashboard({
+export default function Profile({
   customerState,
   session,
 }: {
