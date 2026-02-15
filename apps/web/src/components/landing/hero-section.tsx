@@ -95,7 +95,6 @@ function HealthReportCard() {
 
   return (
     <div className="relative rounded-xl border bg-card p-6 shadow-lg">
-      {/* Floating accent card — only for first site */}
       <AnimatePresence>
         {index === 0 && (
           <motion.div
@@ -112,7 +111,6 @@ function HealthReportCard() {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Header with URL */}
       <div className="mb-4 flex items-center gap-2">
         <div className="size-3 rounded-full bg-primary" />
         <span className="text-sm font-medium">Health Report</span>
@@ -131,7 +129,6 @@ function HealthReportCard() {
         </AnimatePresence>
       </div>
 
-      {/* Metrics */}
       <div className="grid gap-3">
         {(Object.entries(site.scores) as [keyof typeof metricIcons, number][]).map(
           ([label, score]) => {
@@ -176,7 +173,6 @@ function HealthReportCard() {
         )}
       </div>
 
-      {/* Grade */}
       <div
         className={`mt-4 flex items-center justify-between rounded-lg border ${gradeStyles.border} ${gradeStyles.bg} p-3`}
       >
@@ -201,7 +197,6 @@ function HealthReportCard() {
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden py-20 md:py-32">
-      {/* Background decoration */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-0 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl" />
         <div
@@ -215,7 +210,6 @@ export function HeroSection() {
 
       <div className="container mx-auto max-w-6xl px-4">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          {/* Text content */}
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -264,7 +258,6 @@ export function HeroSection() {
             </motion.div>
           </motion.div>
 
-          {/* Decorative health dashboard mockup */}
           <motion.div
             variants={fadeInRight}
             initial="hidden"

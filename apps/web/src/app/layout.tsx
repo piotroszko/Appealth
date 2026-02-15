@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "../index.css";
+import { Footer } from "@/components/landing/footer";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
 import logo from "./logo.svg";
@@ -44,6 +45,7 @@ export default function RootLayout({
           <div className="grid min-h-svh grid-rows-[auto_1fr_auto]">
             <Header logo={<Image src={logo} alt="Appealth logo" className="size-6" />} />
             {children}
+            <Footer />
           </div>
         </Providers>
       </body>

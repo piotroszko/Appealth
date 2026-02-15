@@ -21,7 +21,6 @@ export function Footer() {
     <footer className="border-t bg-muted/50 py-12">
       <div className="container mx-auto max-w-6xl px-4">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
           <div className="flex flex-col gap-3">
             <Link href="/" className="flex items-center gap-2">
               <HeartPulse className="size-5 text-primary" />
@@ -33,7 +32,6 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Link columns */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
               <h4 className="mb-3 text-sm font-semibold">{title}</h4>

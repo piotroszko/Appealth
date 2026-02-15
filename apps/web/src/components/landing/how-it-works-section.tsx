@@ -52,7 +52,6 @@ export function HowItWorksSection() {
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
         >
-          {/* Connecting line (desktop only) */}
           <div className="pointer-events-none absolute left-0 right-0 top-8 hidden h-px bg-border md:block" />
 
           {steps.map((step, index) => (
@@ -61,7 +60,6 @@ export function HowItWorksSection() {
               variants={fadeInUp}
               className="relative flex flex-col items-center text-center"
             >
-              {/* Numbered circle */}
               <div className="relative z-10 mb-4 flex size-16 items-center justify-center rounded-full border-2 border-primary bg-background">
                 <step.icon className="size-7 text-primary" />
               </div>
