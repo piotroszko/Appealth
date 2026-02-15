@@ -23,7 +23,7 @@ export function getColumns(actions: ColumnActions): ColumnDef<Domain>[] {
       header: "Name",
     },
     {
-      accessorKey: "domain",
+      accessorKey: "domainName",
       header: "Domain",
     },
     {

@@ -6,7 +6,7 @@ export interface IDomain {
   _id: string;
   userId: string;
   name: string;
-  domain: string;
+  domainName: string;
   websites: string[];
   allowedExternalDomains: string[];
   createdAt: Date;
@@ -18,7 +18,7 @@ const domainSchema = new Schema<IDomain>(
     _id: { type: String },
     userId: { type: String, ref: "User", required: true },
     name: { type: String, required: true },
-    domain: { type: String, required: true },
+    domainName: { type: String, required: true },
     websites: { type: [String], default: [] },
     allowedExternalDomains: { type: [String], default: [] },
   },

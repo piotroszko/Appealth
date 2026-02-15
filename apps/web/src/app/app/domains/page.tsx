@@ -41,13 +41,13 @@ function getDomainInputs(domain?: Domain) {
       validator: z.string().min(1, "Name is required"),
       defaultValue: domain?.name ?? "",
     },
-    domain: {
+    domainName: {
       type: "text" as const,
       label: "Domain",
       placeholder: "e.g. example.com",
       description: "The domain itself, without protocol (http/https).",
       validator: z.string().min(1, "Domain is required"),
-      defaultValue: domain?.domain ?? "",
+      defaultValue: domain?.domainName ?? "",
     },
     websites: {
       type: "urls" as const,

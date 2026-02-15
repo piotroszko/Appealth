@@ -15,7 +15,7 @@ export const domainsRouter = router({
     .input(
       z.object({
         name: z.string().min(1),
-        domain: z.string().min(1),
+        domainName: z.string().min(1),
         websites: z.array(z.string()).default([]),
         allowedExternalDomains: z.array(z.string()).default([]),
       }),
@@ -26,7 +26,7 @@ export const domainsRouter = router({
         _id: crypto.randomUUID(),
         userId,
         name: input.name,
-        domain: input.domain,
+        domainName: input.domainName,
         websites: input.websites,
         allowedExternalDomains: input.allowedExternalDomains,
       });
@@ -37,7 +37,7 @@ export const domainsRouter = router({
       z.object({
         id: z.string(),
         name: z.string().min(1),
-        domain: z.string().min(1),
+        domainName: z.string().min(1),
         websites: z.array(z.string()).default([]),
         allowedExternalDomains: z.array(z.string()).default([]),
       }),
@@ -48,7 +48,7 @@ export const domainsRouter = router({
         { _id: input.id, userId },
         {
           name: input.name,
-          domain: input.domain,
+          domainName: input.domainName,
           websites: input.websites,
           allowedExternalDomains: input.allowedExternalDomains,
         },
