@@ -5,20 +5,11 @@ import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { AppPage } from "@/components/app/app-page";
-import { Form } from "@/components/form";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { DeleteDomainDialog } from "@/components/domain/delete-domain-dialog";
+import { type Domain, getColumns } from "@/components/domain/domain-columns";
+import { DomainForm } from "@/components/domain/domain-form";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import {
@@ -28,57 +19,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { queryClient, trpc } from "@/utils/trpc";
-
-import { type Domain, getColumns } from "./columns";
-
-function isPartOfDomain(website: string, domain: string): boolean {
-  const withProtocol = website.match(/^https?:\/\//) ? website : `https://${website}`;
-  try {
-    const hostname = new URL(withProtocol).hostname;
-    return hostname === domain || hostname.endsWith(`.${domain}`);
-  } catch {
-    return false;
-  }
-}
-
-function getDomainInputs(domain?: Domain) {
-  return {
-    name: {
-      type: "text" as const,
-      label: "Name",
-      placeholder: "e.g. My Project",
-      description: "A descriptive name for easier identification.",
-      validator: z.string().min(1, "Name is required"),
-      defaultValue: domain?.name ?? "",
-    },
-    domainName: {
-      type: "text" as const,
-      label: "Domain",
-      placeholder: "e.g. example.com",
-      description: "The domain itself, without protocol (http/https).",
-      validator: z.string().min(1, "Domain is required"),
-      defaultValue: domain?.domainName ?? "",
-    },
-    websites: {
-      type: "urls" as const,
-      label: "Websites",
-      placeholder: "e.g. example.com",
-      description:
-        "Websites hosted on this domain. Include all sites on the main domain and subdomains that should be included in checks.",
-      validator: z.array(z.string()).default([]),
-      defaultValue: (domain?.websites ?? []) as string[],
-    },
-    allowedExternalDomains: {
-      type: "urls" as const,
-      label: "Allowed External Domains",
-      placeholder: "e.g. cdn.example.com",
-      description:
-        "External domains you are authorized to run security checks against. Any external links not listed here will be skipped.",
-      validator: z.array(z.string()).default([]),
-      defaultValue: (domain?.allowedExternalDomains ?? []) as string[],
-    },
-  };
-}
 
 export default function DomainsPage() {
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -146,22 +86,10 @@ export default function DomainsPage() {
             <SheetTitle>Add Domain</SheetTitle>
           </SheetHeader>
           <div className="p-4">
-            <Form
-              key={String(sheetOpen)}
-              inputs={getDomainInputs()}
-              refine={(values, ctx) => {
-                const invalid = values.websites.filter((w) => !isPartOfDomain(w, values.domainName));
-                if (invalid.length > 0) {
-                  ctx.addIssue({
-                    code: "custom",
-                    message: `Not part of ${values.domainName}: ${invalid.join(", ")}`,
-                    path: ["websites"],
-                  });
-                }
-              }}
+            <DomainForm
+              formKey={String(sheetOpen)}
               onSubmit={async (values) => { await createMutation.mutateAsync(values); }}
               submitLabel="Create Domain"
-              className="space-y-4"
             />
           </div>
         </SheetContent>
@@ -174,59 +102,27 @@ export default function DomainsPage() {
           </SheetHeader>
           <div className="p-4">
             {domainToEdit && (
-              <Form
-                key={domainToEdit._id as string}
-                inputs={getDomainInputs(domainToEdit)}
-                refine={(values, ctx) => {
-                  const invalid = values.websites.filter((w) => !isPartOfDomain(w, values.domainName));
-                  if (invalid.length > 0) {
-                    ctx.addIssue({
-                      code: "custom",
-                      message: `Not part of "${values.domainName}" domain: ${invalid.join(", ")}`,
-                      path: ["websites"],
-                    });
-                  }
-                }}
+              <DomainForm
+                formKey={domainToEdit._id as string}
+                domain={domainToEdit}
                 onSubmit={async (values) => {
                   await updateMutation.mutateAsync({ id: domainToEdit._id as string, ...values });
                 }}
                 submitLabel="Save Changes"
-                className="space-y-4"
               />
             )}
           </div>
         </SheetContent>
       </Sheet>
 
-      <AlertDialog
-        open={!!domainToDelete}
+      <DeleteDomainDialog
+        domain={domainToDelete}
         onOpenChange={(open) => { if (!open) setDomainToDelete(null); }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete domain</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete{" "}
-              <strong>{domainToDelete?.name}</strong>? This action cannot be
-              undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => {
-                if (domainToDelete) {
-                  deleteMutation.mutate({ id: domainToDelete._id as string });
-                  setDomainToDelete(null);
-                }
-              }}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        onConfirm={(domain) => {
+          deleteMutation.mutate({ id: domain._id as string });
+          setDomainToDelete(null);
+        }}
+      />
     </AppPage>
   );
 }
