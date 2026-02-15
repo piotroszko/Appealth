@@ -17,6 +17,7 @@ interface FormProps<T extends InputsRecord> {
   onSubmit: (values: InferFormValues<T>) => void | Promise<void>;
   refine?: (values: InferFormValues<T>, ctx: RefinementCtx) => void;
   submitLabel?: string;
+  secondaryButton?: ReactNode | ((opts: { reset: () => void }) => ReactNode);
   className?: string;
   children?: ReactNode;
 }
@@ -26,6 +27,7 @@ export function Form<T extends InputsRecord>({
   onSubmit,
   refine,
   submitLabel = "Submit",
+  secondaryButton,
   className,
   children,
 }: FormProps<T>) {
@@ -74,17 +76,20 @@ export function Form<T extends InputsRecord>({
         })}
       </div>
 
-      <form.Subscribe>
-        {(state) => (
-          <Button
-            type="submit"
-            className="mt-8 w-full"
-            disabled={!state.canSubmit || state.isSubmitting}
-          >
-            {state.isSubmitting ? "Submitting..." : submitLabel}
-          </Button>
-        )}
-      </form.Subscribe>
+      <div className="mt-8 flex gap-2">
+        {typeof secondaryButton === "function" ? secondaryButton({ reset: () => form.reset() }) : secondaryButton}
+        <form.Subscribe>
+          {(state) => (
+            <Button
+              type="submit"
+              className="flex-1"
+              disabled={!state.canSubmit || state.isSubmitting}
+            >
+              {state.isSubmitting ? "Submitting..." : submitLabel}
+            </Button>
+          )}
+        </form.Subscribe>
+      </div>
 
       {children}
     </form>

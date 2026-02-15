@@ -3,11 +3,13 @@
 import { use } from "react";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { AppPage } from "@/components/app/app-page";
 import { ProjectForm } from "@/components/project/project-form";
+import { Button } from "@/components/ui/button";
 import { queryClient, trpc } from "@/utils/trpc";
 
 export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
@@ -56,7 +58,8 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     <AppPage
       breadcrumbs={[
         { label: "Projects", href: "/app/projects" },
-        { label: "Edit Project" },
+        { label: project.name, href: `/app/projects/view/${id}` },
+        { label: "Edit" },
       ]}
     >
       <h1 className="text-2xl font-bold">Edit Project</h1>
@@ -68,6 +71,11 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             await updateMutation.mutateAsync({ id, ...values });
           }}
           submitLabel="Save Changes"
+          secondaryButton={
+            <Button nativeButton={false} variant="outline" className="flex-1" render={<Link href={`/app/projects/view/${id}`} />}>
+              Cancel
+            </Button>
+          }
         />
       </div>
     </AppPage>

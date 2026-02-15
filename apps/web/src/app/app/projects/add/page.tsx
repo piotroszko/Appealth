@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { AppPage } from "@/components/app/app-page";
 import { ProjectForm } from "@/components/project/project-form";
+import { Button } from "@/components/ui/button";
 import { queryClient, trpc } from "@/utils/trpc";
 
 export default function AddProjectPage() {
@@ -34,6 +35,11 @@ export default function AddProjectPage() {
           formKey="add-project"
           onSubmit={async (values) => { await createMutation.mutateAsync(values); }}
           submitLabel="Create Project"
+          secondaryButton={({ reset }) => (
+            <Button type="button" variant="outline" className="flex-1" onClick={reset}>
+              Clear
+            </Button>
+          )}
         />
       </div>
     </AppPage>

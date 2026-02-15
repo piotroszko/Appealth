@@ -33,6 +33,9 @@ export default function ProjectsPage() {
     onView: (project: Project) => {
       router.push(`/app/projects/view/${project._id}`);
     },
+    onEdit: (project: Project) => {
+      router.push(`/app/projects/edit/${project._id}`);
+    },
     onDelete: (project: Project) => {
       setProjectToDelete(project);
     },

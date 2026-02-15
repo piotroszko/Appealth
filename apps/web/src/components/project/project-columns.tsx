@@ -4,7 +4,7 @@ import type { inferRouterOutputs } from "@trpc/server";
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { AppRouter } from "@full-tester/api/routers/index";
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -12,6 +12,7 @@ export type Project = inferRouterOutputs<AppRouter>["projects"]["list"][number];
 
 type ColumnActions = {
   onView: (project: Project) => void;
+  onEdit: (project: Project) => void;
   onDelete: (project: Project) => void;
 };
 
@@ -20,15 +21,33 @@ export function getColumns(actions: ColumnActions): ColumnDef<Project>[] {
     {
       accessorKey: "name",
       header: "Name",
+      cell: ({ row }) => (
+        <button type="button" className="cursor-pointer hover:underline text-left" onClick={() => actions.onView(row.original)}>
+          {row.original.name}
+        </button>
+      ),
     },
     {
       accessorKey: "domainName",
       header: "Domain",
+      cell: ({ row }) => (
+        <button type="button" className="cursor-pointer hover:underline text-left" onClick={() => actions.onView(row.original)}>
+          {row.original.domainName}
+        </button>
+      ),
     },
     {
       accessorKey: "url",
       header: "URL",
-      cell: ({ row }) => row.original.url || "—",
+      cell: ({ row }) => {
+        const url = row.original.url;
+        if (!url) return "—";
+        return (
+          <button type="button" className="cursor-pointer hover:underline text-left" onClick={() => actions.onView(row.original)}>
+            {url}
+          </button>
+        );
+      },
     },
     {
       id: "actions",
@@ -43,6 +62,13 @@ export function getColumns(actions: ColumnActions): ColumnDef<Project>[] {
               onClick={() => actions.onView(project)}
             >
               <Eye />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={() => actions.onEdit(project)}
+            >
+              <Pencil />
             </Button>
             <Button
               variant="ghost"

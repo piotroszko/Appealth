@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { z } from "zod";
 
 import { Form } from "@/components/form";
@@ -56,9 +58,10 @@ interface ProjectFormProps {
   project?: Project;
   onSubmit: (values: ProjectFormValues) => Promise<void>;
   submitLabel: string;
+  secondaryButton?: ReactNode | ((opts: { reset: () => void }) => ReactNode);
 }
 
-export function ProjectForm({ formKey, project, onSubmit, submitLabel }: ProjectFormProps) {
+export function ProjectForm({ formKey, project, onSubmit, submitLabel, secondaryButton }: ProjectFormProps) {
   return (
     <Form
       key={formKey}
@@ -74,6 +77,7 @@ export function ProjectForm({ formKey, project, onSubmit, submitLabel }: Project
       }}
       onSubmit={onSubmit}
       submitLabel={submitLabel}
+      secondaryButton={secondaryButton}
       className="space-y-4"
     />
   );
