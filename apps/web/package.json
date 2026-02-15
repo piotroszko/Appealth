@@ -12,7 +12,6 @@
     "@full-tester/api": "*",
     "@full-tester/auth": "*",
     "@full-tester/env": "*",
-    "@opennextjs/cloudflare": "^1.14.6",
     "@polar-sh/better-auth": "^1.6.4",
     "@tanstack/react-form": "^1.28.0",
     "@tanstack/react-query": "^5.90.12",
@@ -37,16 +36,13 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251213.0",
     "@full-tester/config": "*",
     "@tailwindcss/postcss": "^4.1.10",
     "@tanstack/react-query-devtools": "^5.91.1",
     "@types/node": "^20",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "alchemy": "^0.82.1",
     "tailwindcss": "^4.1.10",
-    "typescript": "^5",
-    "wrangler": "^4.54.0"
+    "typescript": "^5"
   }
 }

@@ -12,8 +12,6 @@
     "check-types": "turbo check-types",
     "dev:native": "turbo -F native dev",
     "dev:web": "turbo -F web dev",
-    "deploy": "turbo -F @full-tester/infra deploy",
-    "destroy": "turbo -F @full-tester/infra destroy",
     "check": "oxlint && oxfmt --write"
   },
   "dependencies": {
@@ -22,7 +20,6 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251213.0",
     "@full-tester/config": "*",
     "@types/node": "^22.13.14",
     "oxfmt": "^0.26.0",

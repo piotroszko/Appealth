@@ -12,7 +12,6 @@ A comprehensive website testing, security analysis, and monitoring platform buil
 | Database           | MongoDB, Mongoose 8                            |
 | Auth               | Better-Auth, Polar payments                    |
 | AI                 | AI SDK (Groq)                                  |
-| Deployment         | Cloudflare Workers (OpenNext + Alchemy)        |
 | Monorepo           | npm workspaces, Turborepo                      |
 | Linting/Formatting | Oxlint, Oxfmt                                  |
 | Language           | TypeScript 5 (ESM throughout)                  |
@@ -46,7 +45,6 @@ Create `.env` files in:
 
 - `apps/web/.env` — MongoDB URI, auth secrets, Polar keys
 - `apps/tester/.env` — MongoDB URI, Google API key, Groq API key
-- `packages/infra/.env` — Cloudflare secrets for deployment
 
 ### Running Development
 
@@ -58,7 +56,7 @@ npm run dev
 npm run dev:web
 ```
 
-The web app runs on **port 3001** (via Alchemy) or **port 3002** (bare `next dev`). The tester API runs on **port 3002**.
+The web app runs on **port 3002** (bare `next dev`). The tester API runs on **port 3002**.
 
 ## Project Structure
 
@@ -88,7 +86,6 @@ full-tester/
 │   ├── db/                     # Mongoose models and MongoDB connection
 │   ├── env/                    # Zod-validated env vars (server, web, tester)
 │   ├── config/                 # Shared tsconfig.base.json
-│   └── infra/                  # Alchemy deployment config for Cloudflare Workers
 │
 ├── turbo.json                  # Turborepo task definitions
 ├── .oxlintrc.json              # Oxlint config
@@ -186,10 +183,6 @@ Typed environment variables using `@t3-oss/env-core` with Zod validation. Three 
 
 Shared `tsconfig.base.json` with strict mode, ESNext target, and bundler module resolution.
 
-### `@full-tester/infra`
-
-Alchemy-based infrastructure-as-code for deploying the web app to Cloudflare Workers with secret bindings.
-
 ## Available Scripts
 
 ### Root
@@ -200,8 +193,6 @@ npm run dev:web          # Start only the web app
 npm run build            # Build all packages
 npm run check-types      # TypeScript type checking across monorepo
 npm run check            # Oxlint + Oxfmt (lint and format)
-npm run deploy           # Deploy web to Cloudflare via Alchemy
-npm run destroy          # Tear down Cloudflare deployment
 ```
 
 ### Per-App
@@ -215,26 +206,6 @@ npm run build            # next build
 npm run dev              # tsx watch src/index.ts
 npm run build            # tsc
 ```
-
-## Deployment
-
-The web app deploys to Cloudflare Workers using OpenNext and Alchemy.
-
-```bash
-# Deploy
-npm run deploy
-
-# Tear down
-npm run destroy
-```
-
-For local development with Alchemy:
-
-```bash
-cd apps/web && npm run alchemy dev
-```
-
-See the [Cloudflare + Alchemy guide](https://www.better-t-stack.dev/docs/guides/cloudflare-alchemy) for more details.
 
 ## Key Patterns
 
