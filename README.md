@@ -1,4 +1,4 @@
-# Full Tester
+# Appealth
 
 A comprehensive website testing, security analysis, and monitoring platform built as a TypeScript monorepo. Crawl domains, run 20+ automated security checks, validate HTML, analyze DNS and SSL/TLS configurations, track broken links, and monitor uptime — all from a single dashboard.
 
