@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 import { authClient } from "@/lib/auth-client";
 
+import { buttonVariants } from "./ui/button";
 import { ModeToggle } from "./mode-toggle";
 import UserMenu from "./user-menu";
 
@@ -48,6 +49,11 @@ export default function Header({ logo }: { logo: ReactNode }) {
 
         {/* Right side */}
         <div className="flex items-center gap-2">
+          {session && (
+            <Link href="/app" className={buttonVariants({ size: "sm" })}>
+              Dashboard
+            </Link>
+          )}
           <ModeToggle />
           <UserMenu />
         </div>
