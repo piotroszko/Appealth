@@ -12,7 +12,7 @@ import {
 
 export type BreadcrumbEntry = {
   label: string;
-  href?: LinkProps["href"];
+  href?: LinkProps<any>["href"];
 };
 
 export function AppBreadcrumbs({ items = [] }: { items?: BreadcrumbEntry[] }) {
