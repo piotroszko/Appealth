@@ -31,45 +31,48 @@ import { queryClient, trpc } from "@/utils/trpc";
 
 import { type Domain, getColumns } from "./columns";
 
-const addDomainInputs = {
-  name: {
-    type: "text" as const,
-    label: "Name",
-    placeholder: "e.g. My Project",
-    description: "A descriptive name for easier identification.",
-    validator: z.string().min(1, "Name is required"),
-    defaultValue: "",
-  },
-  domain: {
-    type: "text" as const,
-    label: "Domain",
-    placeholder: "e.g. example.com",
-    description: "The domain itself, without protocol (http/https).",
-    validator: z.string().min(1, "Domain is required"),
-    defaultValue: "",
-  },
-  websites: {
-    type: "urls" as const,
-    label: "Websites",
-    placeholder: "e.g. example.com",
-    description:
-      "Websites hosted on this domain. Include all sites on the main domain and subdomains that should be included in checks.",
-    validator: z.array(z.string()).default([]),
-    defaultValue: [] as string[],
-  },
-  allowedExternalDomains: {
-    type: "urls" as const,
-    label: "Allowed External Domains",
-    placeholder: "e.g. cdn.example.com",
-    description:
-      "External domains you are authorized to run security checks against. Any external links not listed here will be skipped.",
-    validator: z.array(z.string()).default([]),
-    defaultValue: [] as string[],
-  },
-};
+function getDomainInputs(domain?: Domain) {
+  return {
+    name: {
+      type: "text" as const,
+      label: "Name",
+      placeholder: "e.g. My Project",
+      description: "A descriptive name for easier identification.",
+      validator: z.string().min(1, "Name is required"),
+      defaultValue: domain?.name ?? "",
+    },
+    domain: {
+      type: "text" as const,
+      label: "Domain",
+      placeholder: "e.g. example.com",
+      description: "The domain itself, without protocol (http/https).",
+      validator: z.string().min(1, "Domain is required"),
+      defaultValue: domain?.domain ?? "",
+    },
+    websites: {
+      type: "urls" as const,
+      label: "Websites",
+      placeholder: "e.g. example.com",
+      description:
+        "Websites hosted on this domain. Include all sites on the main domain and subdomains that should be included in checks.",
+      validator: z.array(z.string()).default([]),
+      defaultValue: (domain?.websites ?? []) as string[],
+    },
+    allowedExternalDomains: {
+      type: "urls" as const,
+      label: "Allowed External Domains",
+      placeholder: "e.g. cdn.example.com",
+      description:
+        "External domains you are authorized to run security checks against. Any external links not listed here will be skipped.",
+      validator: z.array(z.string()).default([]),
+      defaultValue: (domain?.allowedExternalDomains ?? []) as string[],
+    },
+  };
+}
 
 export default function DomainsPage() {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [domainToEdit, setDomainToEdit] = useState<Domain | null>(null);
   const [domainToDelete, setDomainToDelete] = useState<Domain | null>(null);
   const { data = [] } = useQuery(trpc.domains.list.queryOptions());
 
@@ -79,6 +82,16 @@ export default function DomainsPage() {
         queryClient.invalidateQueries({ queryKey: trpc.domains.list.queryKey() });
         toast.success("Domain created");
         setSheetOpen(false);
+      },
+    }),
+  );
+
+  const updateMutation = useMutation(
+    trpc.domains.update.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: trpc.domains.list.queryKey() });
+        toast.success("Domain updated");
+        setDomainToEdit(null);
       },
     }),
   );
@@ -97,7 +110,7 @@ export default function DomainsPage() {
       console.log("View domain", domain);
     },
     onEdit: (domain: Domain) => {
-      console.log("Edit domain", domain);
+      setDomainToEdit(domain);
     },
     onDelete: (domain: Domain) => {
       setDomainToDelete(domain);
@@ -125,11 +138,32 @@ export default function DomainsPage() {
           <div className="p-4">
             <Form
               key={String(sheetOpen)}
-              inputs={addDomainInputs}
+              inputs={getDomainInputs()}
               onSubmit={async (values) => { await createMutation.mutateAsync(values); }}
               submitLabel="Create Domain"
               className="space-y-4"
             />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={!!domainToEdit} onOpenChange={(open) => { if (!open) setDomainToEdit(null); }}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Edit Domain</SheetTitle>
+          </SheetHeader>
+          <div className="p-4">
+            {domainToEdit && (
+              <Form
+                key={domainToEdit._id as string}
+                inputs={getDomainInputs(domainToEdit)}
+                onSubmit={async (values) => {
+                  await updateMutation.mutateAsync({ id: domainToEdit._id as string, ...values });
+                }}
+                submitLabel="Save Changes"
+                className="space-y-4"
+              />
+            )}
           </div>
         </SheetContent>
       </Sheet>

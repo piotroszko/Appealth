@@ -27,6 +27,6 @@ const domainSchema = new Schema<IDomain>(
 
 domainSchema.index({ userId: 1 });
 
-const Domain = mongoose.models.Domain || model<IDomain>("Domain", domainSchema);
+const Domain = (mongoose.models.Domain as mongoose.Model<IDomain>) || model<IDomain>("Domain", domainSchema);
 
 export { Domain };
