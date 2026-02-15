@@ -63,6 +63,12 @@ export default function SignUpForm() {
                   defaultValue: "",
                   validator: z.string().min(8, "Password must be at least 8 characters"),
                 },
+                accessKey: {
+                  type: "text",
+                  label: "Access Key",
+                  defaultValue: "",
+                  validator: z.string().min(1, "Access key is required"),
+                },
               }}
               onSubmit={async (values) => {
                 await authClient.signUp.email(
@@ -79,6 +85,7 @@ export default function SignUpForm() {
                     onError: (error) => {
                       toast.error(error.error.message || error.error.statusText);
                     },
+                    headers: { "x-register-access-key": values.accessKey },
                   },
                 );
               }}
