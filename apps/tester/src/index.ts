@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import express from "express";
 import { env } from "@full-tester/env/tester";
+import { apiKeyAuth } from "./middleware/api-key.js";
 import { crawlRouter } from "./modules/crawl/index.js";
 import { pageinsightsRouter } from "./modules/pageinsights/index.js";
 import { htmlValidatorRouter } from "./modules/html-validator/index.js";
@@ -18,6 +19,7 @@ const app = express();
 const port = 3002;
 
 app.use(express.json());
+app.use(apiKeyAuth);
 
 app.get("/", (_req, res) => {
   res.json({ status: "ok", message: "full-tester API" });
